@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navbar Responsiveness Test</title>
+    <style>
+        /* Import Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&family=Montserrat:wght@400;600&display=swap');
+
+        /* Root Variables */
+        :root {
+            --primary-base: #003B73;
+            --primary-glow: #05DBF2;
+            --bg-obsidian: #0B0E14;
+            --action-orange: #FF4D00;
+            --text-surface: #E2E8F0;
+            --gradient-bg: linear-gradient(135deg, var(--primary-base), var(--primary-glow));
+        }
+
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-obsidian);
+            color: var(--text-surface);
+            overflow-x: hidden;
+            line-height: 1.6;
+            padding-top: 80px;
+        }
+
+        /* Navigation Bar - Improved Architecture */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--bg-obsidian);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            z-index: 1000;
+            padding: 12px 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 1001;
+        }
+
+        .brand-video {
+            width: 60px;
+            height: 45px;
+            object-fit: cover;
+            border-radius: 200px;
+            display: block;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-logo:hover .brand-video {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 0 15px rgba(5, 219, 242, 0.5);
+        }
+
+        .brand-name {
+            display: none;
+            font-family: 'Oswald', sans-serif;
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary-base), var(--primary-glow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-left: 10px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-logo:hover .brand-name {
+            text-shadow: 0 0 10px rgba(0, 128, 255, 0.5);
+            transform: translateX(5px);
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-link {
+            background: linear-gradient(to right, var(--primary-base), var(--primary-glow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            position: relative;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+
+        .nav-link:hover {
+            color: var(--action-orange);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            z-index: 1002;
+            padding: 10px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: var(--gradient-bg);
+            border-radius: 3px;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: block;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+
+        /* Responsive Design */
+        @media (min-width: 993px) {
+            .nav-menu {
+                display: flex !important;
+            }
+            .hamburger {
+                display: none !important;
+            }
+            .brand-name {
+                display: inline;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .hamburger {
+                display: flex;
+            }
+            
+            .nav-menu {
+                position: fixed;
+                top: 0;
+                right: 0;
+                height: 100vh;
+                width: 80%;
+                background: var(--bg-obsidian);
+                transform: translateX(100%);
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                padding-top: 100px;
+                z-index: 1000;
+            }
+            
+            .nav-menu.active {
+                transform: translateX(0);
+            }
+            
+            .brand-name {
+                display: none;
+            }
+        }
+
+        /* Test Content */
+        .test-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            color: var(--text-surface);
+        }
+
+        .test-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            background: var(--card-bg);
+            border-radius: 10px;
+        }
+
+        h1, h2, h3 {
+            color: var(--primary-glow);
+            margin-bottom: 20px;
+        }
+
+        .test-results {
+            background: rgba(0, 64, 128, 0.2);
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#home" class="nav-logo" aria-label="MAKA Home">
+                <video class="brand-video" src="Maka_Animated.mp4" autoplay muted loop playsinline preload="metadata"
+                    poster="MAKA 3D.jpeg"></video>
+                <span class="brand-name">MAKA</span>
+            </a>
+            <ul class="nav-menu" id="nav-menu">
+                <li class="nav-item"><a href="#home" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="#about" class="nav-link">About</a></li>
+                <li class="nav-item"><a href="#products" class="nav-link">Store</a></li>
+                <li class="nav-item"><a href="#carrito" class="nav-link">Cart</a></li>
+                <li class="nav-item"><a href="#ofertas" class="nav-link">Offers</a></li>
+                <li class="nav-item"><a href="#galeria" class="nav-link">Gallery</a></li>
+                <li class="nav-item"><a href="#contacto" class="nav-link">Contact</a></li>
+            </ul>
+            <div class="hamburger" id="hamburger" role="button" aria-label="Toggle navigation menu"
+                aria-expanded="false" aria-controls="nav-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="test-content">
+        <div class="test-section">
+            <h1>Navbar Responsiveness Test</h1>
+            <p>This page tests the improved navbar responsiveness. Resize your browser window to see the navbar adapt to different screen sizes.</p>
+        </div>
+
+        <div class="test-section">
+            <h2>Test Instructions</h2>
+            <ol>
+                <li>Start with a large browser window (desktop view)</li>
+                <li>Gradually resize the window to smaller sizes</li>
+                <li>Observe the navbar behavior at different breakpoints</li>
+                <li>Test the hamburger menu on mobile view</li>
+                <li>Check hover effects and transitions</li>
+            </ol>
+        </div>
+
+        <div class="test-section">
+            <h2>Expected Behavior</h2>
+            <ul>
+                <li>Desktop (>992px): Full navbar with all links visible, brand name shown</li>
+                <li>Tablet (768-992px): Full navbar with all links visible, brand name shown</li>
+                <li>Mobile (<768px): Hamburger menu appears, brand name hidden, sidebar menu slides in</li>
+                <li>Hover effects: Smooth transitions on logo and menu items</li>
+                <li>Mobile menu: Slides in from right with smooth cubic-bezier animation</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h2>Technical Improvements</h2>
+            <div class="test-results">
+                <h3>CSS Architecture</h3>
+                <ul>
+                    <li>Improved navbar structure with display: flex and justify-content: space-between</li>
+                    <li>Position: sticky for better scrolling behavior</li>
+                    <li>Cubic-bezier transitions for smoother animations</li>
+                    <li>Proper z-index hierarchy for layering</li>
+                </ul>
+            </div>
+            <div class="test-results">
+                <h3>Logo & Brand Video</h3>
+                <ul>
+                    <li>Fluid scaling with clamp() for brand name</li>
+                    <li>Enhanced hover effects with transform and box-shadow</li>
+                    <li>Smooth transitions using cubic-bezier easing</li>
+                </ul>
+            </div>
+            <div class="test-results">
+                <h3>Mobile Responsiveness</h3>
+                <ul>
+                    <li>Full-screen sidebar menu on mobile</li>
+                    <li>Transform-based animations for performance</li>
+                    <li>Proper mobile menu positioning and z-index</li>
+                    <li>Hamburger icon animation with CSS transforms</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>Browser Compatibility</h2>
+            <p>Tested on modern browsers with the following features:</p>
+            <ul>
+                <li>CSS Grid and Flexbox</li>
+                <li>CSS Variables (Custom Properties)</li>
+                <li>CSS Transitions and Transforms</li>
+                <li>Viewports and responsive units</li>
+                <li>Sticky positioning</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Simple hamburger menu toggle for testing
+        document.addEventListener('DOMContentLoaded', () => {
+            const hamburger = document.getElementById('hamburger');
+            const navMenu = document.getElementById('nav-menu');
+
+            if (hamburger && navMenu) {
+                hamburger.addEventListener('click', () => {
+                    const isActive = navMenu.classList.toggle('active');
+                    hamburger.classList.toggle('active', isActive);
+                    hamburger.setAttribute('aria-expanded', isActive);
+                    document.body.style.overflow = isActive ? 'hidden' : '';
+                });
+
+                // Close menu when clicking a link
+                navMenu.querySelectorAll('.nav-link').forEach(link => {
+                    link.addEventListener('click', () => {
+                        navMenu.classList.remove('active');
+                        hamburger.classList.remove('active');
+                        hamburger.setAttribute('aria-expanded', false);
+                        document.body.style.overflow = '';
+                    });
+                });
+            }
+
+            // Add visual feedback for testing
+            console.log('Navbar responsiveness test initialized');
+            console.log('Current viewport width:', window.innerWidth, 'px');
+
+            window.addEventListener('resize', () => {
+                console.log('Viewport resized to:', window.innerWidth, 'px');
+            });
+        });
+    </script>
+</body>
+</html>

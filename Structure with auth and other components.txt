@@ -1,0 +1,73 @@
+Hello, Please take into account everything in the description, to apply and autocorrect errors applying logical and systematical thinking with Programing Estructure, all time with empathic and deep research. Features for strongly apply: This mobile-first, with doble role interface with credentials " customer and Seller" AI-assisted 360° fashion commerce platform is built for Colombian importers who buy clothing from China and sell locally, running on any phone with zero crashes. It’s a complete operating system—Product Capture → 3D Visualization → AI Styling → Sales → Profit Analytics → Customer Engagement—designed for COP, WhatsApp, Nequi, and Daviplata. Real Garment 360° Capture delivers true fabric and fit with a 15s video, while AI Stylist elevates AOV by up to 35% by suggesting outfits. The engagement hub and WhatsApp-first flow boost conversions by 65% with instant, frictionless conversations. All with auto-backups, offline queuing, and a multi-language UI (ES/EN/PT) to maximize reach and profitability, please strongly take into account all the features. Logo is according with color in the image if I can give you with purple shine gradient affect through animation, please do a deep check and extract the color, Run a safe PowerShell cleanup using absolute paths, install dependencies with npm, and then start the dev server in the background. This should resolve the rm error and the Vite package issue. with a clean estructure to avoid craxhes. 
+Color Hex: Dark Blue (Shadow/Deepest parts): I'd estimate the darkest shade to be around #0A1D6E.
+Primary Blue (Middle/Body of the letters): The most dominant, vibrant blue is close to #2160C4.
+Light Blue (Highlight/Bottom edge of the word MAKA): For the brighter, almost electric blue gradient, a good code is approximately #46A9F8.
+Here is the estructure:
+
+MAKA_app/
+
+│── index.html
+│
+├── src/
+│   ├── App/                  ← ✅ Folder for App.jsx and related files
+│   │   └── App.jsx           ← ✅ Main component
+│   │
+│   ├── assets/               ← ✅ Static assets (images, icons)
+│   │   └── logo.png          ← ✅ Your MAKA logo
+│   │
+│   ├── components/           ← ✅ All UI components
+│   │   ├── auth/
+│   │   │   ├── LoginScreen.jsx  ← ✅ Login page
+│   │   │   └── RoleSelector.jsx ← ✅ Role selection screen
+│   │   │
+│   │   ├── layout/
+│   │   │   ├── Sidebar.jsx
+│   │   │   └── Header.jsx
+│   │   │
+│   │   ├── modules/
+│   │   │   ├── Dashboard.jsx
+│   │   │   ├── Inventory.jsx
+│   │   │   ├── Sales.jsx
+│   │   │   ├── Suppliers.jsx
+│   │   │   ├── Profit.jsx
+│   │   │   ├── Tasks.jsx
+│   │   │   ├── Reports.jsx
+│   │   │   └── Settings.jsx
+│   │   │
+│   │   └── features/
+│   │       ├── TutorialModal.jsx
+│   │       ├── SupportAgent.jsx
+│   │       ├── ClientEngagementBar.jsx
+│   │       ├── LanguageSwitcher.jsx
+│   │       ├── AIStylist.jsx
+│   │       ├── GarmentCapture.jsx
+│   │       └── Garment360Viewer.jsx
+│   │
+│   ├── context/              ← ✅ State management
+│   │   └── AuthContext.jsx   ← ✅ Authentication logic
+│   │
+│   ├── i18n/                 ← ✅ Multi-language support
+│   │   ├── translations/
+│   │   │   ├── es.json
+│   │   │   ├── en.json
+│   │   │   └── pt.json
+│   │   └── LanguageContext.jsx
+│   │
+│   ├── utils/                ← ✅ Utility functions
+│   │   ├── performanceGuard.js
+│   │   ├── outfitEngine.js
+│   │   ├── videoProcessor.js
+│   │   └── ... (other utils)
+│   │
+│   ├── index/                ← ✅ Entry point for Vite
+│   │   └── index.jsx         ← ✅ Imports App.jsx
+│   │
+│   ├── styles/               ← ✅ CSS/SCSS files
+│   │   └── tailwind.css      ← ✅ Tailwind configuration
+│   │
+│   ├── selfUpdate.js         ← ✅ Auto-update logic
+│   └── main.jsx              ← ✅ Vite entry point
+│
+├── package.json
+├── vite.config.js
+└── README.md

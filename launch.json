@@ -1,0 +1,123 @@
+{
+    // Universal VSCode launch.json for Maka: Covers all browsers, OS, and global dev scenarios.
+    // Install extensions: Live Server (for http://localhost), Debugger for Firefox.
+    // Usage: F5 to select; set breakpoints in Script.js for testing.
+    "version": "0.2.0",
+    "configurations": [
+        // === BROWSER LAUNCHES (Static File - Quick Local Testing) ===
+        {
+            "type": "pwa-chrome",
+            "name": "Launch Chrome (Static - Universal Default)",
+            "request": "launch",
+            "url": "file://${workspaceFolder}/Index.html",
+            "webRoot": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "pwa-msedge",
+            "name": "Launch Edge (Windows-Native, Global Chromium)",
+            "request": "launch",
+            "url": "file://${workspaceFolder}/Index.html",
+            "webRoot": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "firefox",
+            "name": "Launch Firefox (Privacy-Focused, Extension Required)",
+            "request": "launch",
+            "relaunchInTerminal": true,
+            "url": "file://${workspaceFolder}/Index.html",
+            "webRoot": "${workspaceFolder}",
+            "pathMappings": [{"url": "localhost:3000", "path": "${workspaceFolder}"}],
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "node",
+            "name": "Launch Safari (macOS-Only, Manual Attach)",
+            "request": "launch",
+            "program": "${workspaceFolder}/Index.html",
+            "runtimeExecutable": "/usr/bin/osascript",
+            "runtimeArgs": ["-e", "tell application 'Safari' to open location 'file://${workspaceFolder}/Index.html'"],
+            "console": "integratedTerminal",
+            "presentation": {"hidden": true},
+            "problemMatcher": [],
+            "skipFiles": ["<node_internals>/**"]
+        },
+
+        // === SERVER-BASED & EMULATION (Live Reload, Mobile, Headless) ===
+        {
+            "type": "pwa-chrome",
+            "name": "Live Server (Chrome - Global Dev Workflow)",
+            "request": "launch",
+            "url": "http://localhost:5500/Index.html",
+            "webRoot": "${workspaceFolder}",
+            "server": {"waitForBrowser": true},
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "pwa-chrome",
+            "name": "Chrome Headless (CI/CD, Low-Resource Machines)",
+            "request": "launch",
+            "url": "file://${workspaceFolder}/Index.html",
+            "webRoot": "${workspaceFolder}",
+            "runtimeArgs": ["--headless=new", "--disable-gpu", "--no-sandbox"],
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "pwa-chrome",
+            "name": "Chrome Mobile Emulation (Global Device Testing)",
+            "request": "launch",
+            "url": "file://${workspaceFolder}/Index.html",
+            "webRoot": "${workspaceFolder}",
+            "runtimeArgs": [
+                "--user-agent=Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X)",
+                "--window-size=375,812"
+            ],
+            "console": "integratedTerminal"
+        },
+
+        // === ATTACH & ADVANCED (Remote, Node.js for Servers) ===
+        {
+            "type": "pwa-chrome",
+            "name": "Attach to Chrome (Remote/Global Team Debug)",
+            "request": "attach",
+            "port": 9222,
+            "url": "http://localhost:*/*",
+            "webRoot": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "node",
+            "name": "Node.js Server (If Adding Backend/API Sim)",
+            "request": "launch",
+            "program": "${workspaceFolder}/server.js",  // Create if needed
+            "console": "integratedTerminal",
+            "skipFiles": ["<node_internals>/**"]
+        }
+    ],
+    "compounds": [
+        // === COMPOUNDS (Intuitive Workflows for Psychological Ease) ===
+        {
+            "name": "Full Browser Suite (All Chromium - Universal Test)",
+            "configurations": [
+                "Launch Chrome (Static - Universal Default)",
+                "Launch Edge (Windows-Native, Global Chromium)"
+            ],
+            "stopAll": true
+        },
+        {
+            "name": "Live Debug (Server + Mobile Emulation)",
+            "configurations": [
+                "Live Server (Chrome - Global Dev Workflow)",
+                "Chrome Mobile Emulation (Global Device Testing)"
+            ],
+            "stopAll": true,
+            "preLaunchTask": "liveServer.start"
+        },
+        {
+            "name": "Remote Attach Suite (Global Collaboration)",
+            "configurations": ["Attach to Chrome (Remote/Global Team Debug)"],
+            "stopAll": false
+        }
+    ]
+}
