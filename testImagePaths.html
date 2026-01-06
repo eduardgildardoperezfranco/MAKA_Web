@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Path Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+        .test-section h2 {
+            color: #0066cc;
+            margin-top: 0;
+        }
+        .image-test {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            background: white;
+        }
+        .image-test img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border: 1px solid #ddd;
+            margin-right: 15px;
+        }
+        .image-test.error img {
+            border: 2px solid #ff4444;
+        }
+        .image-test.success img {
+            border: 2px solid #4CAF50;
+        }
+        .image-info {
+            flex: 1;
+        }
+        .image-info h3 {
+            margin: 0 0 5px 0;
+            color: #333;
+        }
+        .image-info p {
+            margin: 2px 0;
+            font-size: 14px;
+            color: #666;
+        }
+        .status {
+            font-weight: bold;
+        }
+        .status.success {
+            color: #4CAF50;
+        }
+        .status.error {
+            color: #ff4444;
+        }
+        .console-output {
+            background: #1e1e1e;
+            color: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .summary {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .summary h3 {
+            margin: 0 0 10px 0;
+            color: #2E7D32;
+        }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        .stat-item {
+            text-align: center;
+            padding: 10px 20px;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .stat-item .number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2E7D32;
+        }
+        .stat-item .label {
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔍 MAKA Gallery Image Path Test</h1>
+        
+        <div class="summary" id="summary">
+            <h3>Testing Image Paths</h3>
+            <p>This tool tests the image paths from assetsGallery.json to ensure they display correctly.</p>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="number" id="total-images">0</div>
+                    <div class="label">Total Images</div>
+                </div>
+                <div class="stat-item">
+                    <div class="number" id="success-count">0</div>
+                    <div class="label">Working</div>
+                </div>
+                <div class="stat-item">
+                    <div class="number" id="error-count">0</div>
+                    <div class="label">Failed</div>
+                </div>
+                <div class="stat-item">
+                    <div class="number" id="success-rate">0%</div>
+                    <div class="label">Success Rate</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>📁 Original Paths Test</h2>
+            <p>Testing paths exactly as they appear in assetsGallery.json</p>
+            <div id="original-paths-test"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>🔧 Normalized Paths Test</h2>
+            <p>Testing paths after normalization (cross-platform compatible)</p>
+            <div id="normalized-paths-test"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>📋 Path Analysis</h2>
+            <p>Detailed analysis of path issues and solutions</p>
+            <div id="path-analysis"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>💻 Console Output</h2>
+            <p>Debug information and error details</p>
+            <div class="console-output" id="console-output">
+Loading test data...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Test data and functions
+        class ImagePathTester {
+            constructor() {
+                this.testData = [];
+                this.successCount = 0;
+                this.errorCount = 0;
+                this.pathIssues = new Set();
+                this.init();
+            }
+
+            async init() {
+                try {
+                    this.log('🔄 Loading assetsGallery.json...');
+                    const response = await fetch('assetsGallery.json');
+                    this.testData = await response.json();
+                    
+                    this.log(`✅ Successfully loaded ${this.testData.length} images`);
+                    this.updateSummary();
+                    
+                    this.testOriginalPaths();
+                    this.testNormalizedPaths();
+                    this.analyzePaths();
+                    
+                } catch (error) {
+                    this.log(`❌ Error loading test data: ${error.message}`, 'error');
+                    console.error('Detailed error:', error);
+                }
+            }
+
+            testOriginalPaths() {
+                const container = document.getElementById('original-paths-test');
+                container.innerHTML = '<p>Testing original paths...</p>';
+                
+                // Test a sample of images (first 10 to avoid overwhelming the page)
+                const sampleSize = Math.min(10, this.testData.length);
+                
+                for (let i = 0; i < sampleSize; i++) {
+                    const item = this.testData[i];
+                    const testElement = this.createImageTestElement(item, item.image, 'original');
+                    container.appendChild(testElement);
+                }
+            }
+
+            testNormalizedPaths() {
+                const container = document.getElementById('normalized-paths-test');
+                container.innerHTML = '<p>Testing normalized paths...</p>';
+                
+                // Test a sample of images (first 10 to avoid overwhelming the page)
+                const sampleSize = Math.min(10, this.testData.length);
+                
+                for (let i = 0; i < sampleSize; i++) {
+                    const item = this.testData[i];
+                    const normalizedPath = this.normalizePath(item.image);
+                    const testElement = this.createImageTestElement(item, normalizedPath, 'normalized');
+                    container.appendChild(testElement);
+                }
+            }
+
+            normalizePath(originalPath) {
+                // Normalize path separators to forward slashes for web compatibility
+                let normalizedPath = originalPath.replace(/[\\/]+/g, '/');
+                
+                // Ensure the path starts with the correct base
+                if (!normalizedPath.startsWith('Assets/') && !normalizedPath.startsWith('/')) {
+                    normalizedPath = 'Assets/' + normalizedPath;
+                }
+                
+                // Remove any leading ./ or ../ sequences
+                normalizedPath = normalizedPath.replace(/^(\.\/)+/, '');
+                
+                return normalizedPath;
+            }
+
+            createImageTestElement(item, testPath, testType) {
+                const element = document.createElement('div');
+                element.className = 'image-test';
+                
+                const img = document.createElement('img');
+                img.src = testPath;
+                img.alt = `Test: ${item.badge}`;
+                img.onerror = () => {
+                    element.classList.add('error');
+                    element.classList.remove('success');
+                    this.errorCount++;
+                    this.pathIssues.add(testPath);
+                    this.updateSummary();
+                    this.log(`❌ Image failed to load: ${testPath}`, 'error');
+                };
+                
+                img.onload = () => {
+                    element.classList.add('success');
+                    element.classList.remove('error');
+                    this.successCount++;
+                    this.updateSummary();
+                    this.log(`✅ Image loaded successfully: ${testPath}`);
+                };
+                
+                const info = document.createElement('div');
+                info.className = 'image-info';
+                info.innerHTML = `
+                    <h3>${item.badge}</h3>
+                    <p><strong>Original:</strong> ${item.image}</p>
+                    <p><strong>Testing:</strong> ${testPath}</p>
+                    <p><strong>Type:</strong> ${testType}</p>
+                    <p><span class="status">Loading...</span></p>
+                `;
+                
+                element.appendChild(img);
+                element.appendChild(info);
+                
+                return element;
+            }
+
+            analyzePaths() {
+                const container = document.getElementById('path-analysis');
+                
+                let analysis = '<h3>Path Analysis Results</h3>';
+                
+                if (this.pathIssues.size === 0) {
+                    analysis += '<p style="color: #4CAF50;">🎉 All paths are working correctly!</p>';
+                } else {
+                    analysis += `<p style="color: #ff4444;">⚠️ Found ${this.pathIssues.size} path issues:</p>`;
+                    analysis += '<ul style="color: #666;">';
+                    
+                    this.pathIssues.forEach(issue => {
+                        analysis += `<li>${issue}</li>`;
+                    });
+                    
+                    analysis += '</ul>';
+                }
+                
+                // Add recommendations
+                analysis += '<h4 style="margin-top: 20px;">Recommendations:</h4>';
+                analysis += '<ul style="color: #333;">';
+                analysis += '<li>Use forward slashes (/) instead of backslashes (\\)</li>';
+                analysis += '<li>Ensure all paths start with "Assets/"</li>';
+                analysis += '<li>Remove any "../" or "./" from paths</li>';
+                analysis += '<li>Check for case sensitivity issues</li>';
+                analysis += '<li>Verify file extensions match actual files</li>';
+                analysis += '</ul>';
+                
+                container.innerHTML = analysis;
+            }
+
+            updateSummary() {
+                const total = this.testData.length;
+                const success = this.successCount;
+                const error = this.errorCount;
+                const successRate = total > 0 ? Math.round((success / total) * 100) : 0;
+                
+                document.getElementById('total-images').textContent = total;
+                document.getElementById('success-count').textContent = success;
+                document.getElementById('error-count').textContent = error;
+                document.getElementById('success-rate').textContent = `${successRate}%`;
+                
+                // Update summary color based on success rate
+                const summaryElement = document.getElementById('summary');
+                if (successRate >= 80) {
+                    summaryElement.style.background = '#e8f5e9';
+                } else if (successRate >= 50) {
+                    summaryElement.style.background = '#fff3e0';
+                } else {
+                    summaryElement.style.background = '#ffebee';
+                }
+            }
+
+            log(message, type = 'info') {
+                const consoleOutput = document.getElementById('console-output');
+                const timestamp = new Date().toLocaleTimeString();
+                
+                let logEntry = `[${timestamp}] ${message}`;
+                
+                if (type === 'error') {
+                    logEntry = `<span style="color: #ff4444;">${logEntry}</span>`;
+                } else if (type === 'success') {
+                    logEntry = `<span style="color: #4CAF50;">${logEntry}</span>`;
+                } else if (type === 'warn') {
+                    logEntry = `<span style="color: #ff9800;">${logEntry}</span>`;
+                }
+                
+                consoleOutput.innerHTML += logEntry + '\n';
+                consoleOutput.scrollTop = consoleOutput.scrollHeight;
+                
+                // Also log to browser console
+                switch (type) {
+                    case 'error':
+                        console.error(message);
+                        break;
+                    case 'warn':
+                        console.warn(message);
+                        break;
+                    default:
+                        console.log(message);
+                }
+            }
+        }
+
+        // Initialize the tester when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            window.imagePathTester = new ImagePathTester();
+        });
+    </script>
+</body>
+</html>

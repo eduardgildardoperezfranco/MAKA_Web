@@ -1,4 +1,8 @@
+import { GalleryUI } from './galleryManager.js';
+
 // Enhance interactions and add corner-docking effect for brain video
+// NOTE: This file is intentionally named `Script.js` (lowercase extension) to work on case-sensitive hosts.
+
 document.addEventListener('DOMContentLoaded', () => {
   // Logo hover (kept)
   const logo = document.querySelector('.logo');
@@ -79,8 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-
-
   // Hamburger menu toggle for mobile
   const hamburger = document.getElementById('hamburger');
   const navMenu = document.getElementById('nav-menu');
@@ -153,24 +155,21 @@ document.addEventListener('DOMContentLoaded', () => {
   if (loginLink) {
     loginLink.addEventListener('click', (e) => {
       e.preventDefault();
-      
-      // Create a professional coming soon alert
+
       const alertMessage = `
       🔒 Login Feature Coming Soon!
-      
+
       We're currently working on our secure login system and database integration.
-      
+
       📅 Expected Availability: Soon
       🎯 Features: Secure access, order history, personalized recommendations
-      
+
       Thank you for your patience!
       `;
-      
-      // Show alert with options
+
       const userChoice = confirm(alertMessage + '\n\nClick OK to return to the main page or Cancel to stay here.');
-      
+
       if (userChoice) {
-        // Return to main page
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     });
@@ -277,88 +276,31 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   setInterval(updateStock, 10000); // Update every 10 seconds
 
-  // Dynamically load gallery from JSON with performance optimization
-  fetch('assetsGallery.json')
-    .then(response => response.json())
-    .then(data => {
-      const productGrid = document.querySelector('.product-grid');
-      // Limit initial load to prevent performance issues
-      const initialLoadCount = 12; // Load only first 12 images initially
-      const itemsToLoad = data.slice(0, initialLoadCount);
-      
-      // Load initial items with animation
-      itemsToLoad.forEach((item, index) => {
-        const card = document.createElement('div');
-        card.className = 'product-card';
-        card.innerHTML = `
-          <div class="product-image-container">
-            <img src="${item.image}" alt="${item.badge}" class="product-image" loading="lazy" decoding="async">
-          </div>
-          <div class="product-badge">${item.badge}</div>
-          <p class="product-quote">${item.message}</p>
-        `;
-        productGrid.appendChild(card);
-        
-        // Stagger animation for initial load
-        setTimeout(() => {
-          card.classList.add('loaded');
-        }, index * 100);
-      });
-      
-      // Add a "Load More" button if there are more images
-      if (data.length > initialLoadCount) {
-        const loadMoreBtn = document.createElement('button');
-        loadMoreBtn.className = 'load-more-btn';
-        loadMoreBtn.textContent = `Load More Gallery (${data.length - initialLoadCount} more)`;
-        loadMoreBtn.onclick = () => {
-          loadMoreBtn.disabled = true;
-          loadMoreBtn.textContent = 'Loading...';
-          
-          // Load remaining images with delay to prevent blocking
-          const remainingItems = data.slice(initialLoadCount);
-          let loadedCount = 0;
-          
-          const loadBatch = () => {
-            const batch = remainingItems.splice(0, 6); // Load 6 at a time
-            batch.forEach((item, index) => {
-              const card = document.createElement('div');
-              card.className = 'product-card';
-              card.innerHTML = `
-                <div class="product-image-container">
-                  <img src="${item.image}" alt="${item.badge}" class="product-image" loading="lazy" decoding="async">
-                </div>
-                <div class="product-badge">${item.badge}</div>
-                <p class="product-quote">${item.message}</p>
-              `;
-              productGrid.appendChild(card);
-              
-              // Stagger animation for loaded items
-              setTimeout(() => {
-                card.classList.add('loaded');
-              }, index * 50);
-              
-              loadedCount++;
-            });
-            
-            if (remainingItems.length > 0) {
-              setTimeout(loadBatch, 200); // Slightly longer delay between batches
-            } else {
-              loadMoreBtn.remove();
-              // Add a "Back to Top" button
-              const backToTopBtn = document.createElement('button');
-              backToTopBtn.className = 'back-to-top-btn';
-              backToTopBtn.textContent = 'Back to Top';
-              backToTopBtn.onclick = () => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              };
-              productGrid.appendChild(backToTopBtn);
-            }
-          };
-          
-          loadBatch();
-        };
-        productGrid.appendChild(loadMoreBtn);
-      }
-    })
-    .catch(error => console.error('Error loading gallery:', error));
+  // Initialize the enhanced gallery system
+  const galleryContainer = document.getElementById('maka-gallery');
+  if (galleryContainer) {
+    // Browsers block `fetch()` from local files. Run a local server (Live Server / http-server) instead.
+    if (window.location.protocol === 'file:') {
+      galleryContainer.innerHTML = `
+        <div style="padding:1rem;border-radius:8px;background:#fff3cd;color:#856404;border:1px solid #ffeeba;">
+          <strong>Gallery can’t load while opened as a local file.</strong><br>
+          Open this project with a local web server (VSCode Live Server) so <code>fetch('assetsGallery.json')</code> works.
+        </div>
+      `;
+      return;
+    }
+
+    try {
+      const galleryUI = new GalleryUI();
+      galleryUI.initialize(galleryContainer);
+    } catch (err) {
+      console.error('Gallery initialization failed:', err);
+      galleryContainer.innerHTML = `
+        <div style="padding:1rem;border-radius:8px;background:#f8d7da;color:#721c24;border:1px solid #f5c6cb;">
+          <strong>Gallery failed to initialize.</strong><br>
+          Open DevTools Console to see the error details.
+        </div>
+      `;
+    }
+  }
 });

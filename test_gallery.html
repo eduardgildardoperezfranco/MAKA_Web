@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery Test - MAKA</title>
+    <link rel="stylesheet" href="Style.css?v=1">
+    <style>
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-header {
+            background: linear-gradient(135deg, #2160C4, #46A9F8);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .test-status {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-family: monospace;
+        }
+        .test-status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .test-status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .test-status.info {
+            background: #cce5ff;
+            color: #004085;
+        }
+        #gallery-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .gallery-test-item {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .gallery-test-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+        .gallery-test-item .item-info {
+            padding: 10px;
+            font-size: 12px;
+        }
+        .gallery-test-item.error {
+            background: #ffcccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>MAKA Gallery Test</h1>
+            <p>This page tests if the gallery images are loading correctly.</p>
+        </div>
+        
+        <div id="test-status" class="test-status info">
+            Initializing test...
+        </div>
+        
+        <h2>Image Loading Results</h2>
+        <div id="gallery-results"></div>
+    </div>
+
+    <script type="module">
+        import { GalleryUI } from './galleryManager.js';
+        
+        const statusEl = document.getElementById('test-status');
+        const resultsEl = document.getElementById('gallery-results');
+        
+        function updateStatus(message, type = 'info') {
+            statusEl.textContent = message;
+            statusEl.className = `test-status ${type}`;
+        }
+        
+        function addResult(imagePath, success, errorMsg = '') {
+            const div = document.createElement('div');
+            div.className = `gallery-test-item ${success ? '' : 'error'}`;
+            
+            if (success) {
+                div.innerHTML = `
+                    <img src="${imagePath}" alt="Test image" onload="this.parentElement.classList.add('success')" onerror="this.parentElement.classList.add('error'); this.parentElement.querySelector('.item-info').textContent = 'Error: ${errorMsg}'">
+                    <div class="item-info">${imagePath.split('/').pop()}</div>
+                `;
+            } else {
+                div.innerHTML = `
+                    <div style="height: 150px; display: flex; align-items: center; justify-content: center; background: #ffcccc;">
+                        <span style="color: red;">✗ Failed</span>
+                    </div>
+                    <div class="item-info">${imagePath.split('/').pop()}<br><small>${errorMsg}</small></div>
+                `;
+            }
+            
+            resultsEl.appendChild(div);
+        }
+        
+        async function testGallery() {
+            try {
+                updateStatus('Loading assetsGallery.json...', 'info');
+                
+                const response = await fetch('assetsGallery.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                updateStatus(`Loaded ${data.length} image entries`, 'success');
+                
+                let successCount = 0;
+                let errorCount = 0;
+                
+                for (const item of data) {
+                    const img = new Image();
+                    const imgPromise = new Promise((resolve) => {
+                        img.onload = () => resolve(true);
+                        img.onerror = () => resolve(false);
+                    });
+                    
+                    img.src = item.image;
+                    const loaded = await imgPromise;
+                    
+                    if (loaded) {
+                        successCount++;
+                        addResult(item.image, true);
+                    } else {
+                        errorCount++;
+                        addResult(item.image, false, 'Image failed to load');
+                    }
+                }
+                
+                updateStatus(
+                    `Test complete: ${successCount} images loaded, ${errorCount} failed. ` +
+                    `Make sure you're running this on a local web server (not file://).`,
+                    errorCount === 0 ? 'success' : 'error'
+                );
+                
+            } catch (error) {
+                updateStatus(`Error: ${error.message}. Make sure you're running a local web server.`, 'error');
+            }
+        }
+        
+        // Run test
+        testGallery();
+    </script>
+</body>
+</html>

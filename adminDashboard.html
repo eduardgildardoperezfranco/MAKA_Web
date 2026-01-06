@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAKA Gallery Admin Dashboard</title>
+    <link rel="icon" href="MAKA 3D.jpeg" type="image/jpeg">
+    <link rel="stylesheet" href="Style.css?v=1">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --admin-primary: #0A1D6E;
+            --admin-secondary: #2160C4;
+            --admin-accent: #46A9F8;
+            --admin-danger: #f44336;
+            --admin-success: #4CAF50;
+            --admin-warning: #ff9800;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f5f7fa;
+        }
+        
+        .admin-sidebar {
+            background: linear-gradient(135deg, var(--admin-primary), var(--admin-secondary));
+            color: white;
+        }
+        
+        .admin-header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .admin-content {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .stat-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .data-table th {
+            background: var(--admin-primary);
+            color: white;
+            position: sticky;
+            top: 0;
+        }
+        
+        .moderation-flagged {
+            background: #fff3cd;
+            border-left: 4px solid #ff9800;
+        }
+        
+        .moderation-approved {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+        
+        .image-preview {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .image-preview:hover {
+            transform: scale(1.1);
+        }
+        
+        .action-btn {
+            transition: all 0.3s ease;
+        }
+        
+        .action-btn:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="admin-sidebar w-64 min-h-screen flex flex-col">
+            <div class="p-4 border-b border-blue-800">
+                <div class="flex items-center">
+                    <img src="MAKA 3D.jpeg" alt="MAKA Logo" class="w-12 h-12 rounded-full mr-3">
+                    <h1 class="text-xl font-bold">MAKA Admin</h1>
+                </div>
+            </div>
+            
+            <nav class="flex-1 p-4">
+                <ul class="space-y-2">
+                    <li>
+                        <a href="#dashboard" class="admin-nav-link flex items-center p-3 rounded-lg text-white hover:bg-blue-600 transition-colors">
+                            <i class="fas fa-tachometer-alt mr-3"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#gallery-management" class="admin-nav-link flex items-center p-3 rounded-lg text-white hover:bg-blue-600 transition-colors">
+                            <i class="fas fa-images mr-3"></i>
+                            <span>Gallery Management</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#moderation" class="admin-nav-link flex items-center p-3 rounded-lg text-white hover:bg-blue-600 transition-colors">
+                            <i class="fas fa-shield-alt mr-3"></i>
+                            <span>Content Moderation</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#categories" class="admin-nav-link flex items-center p-3 rounded-lg text-white hover:bg-blue-600 transition-colors">
+                            <i class="fas fa-tags mr-3"></i>
+                            <span>Categories & Tags</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#licenses" class="admin-nav-link flex items-center p-3 rounded-lg text-white hover:bg-blue-600 transition-colors">
+                            <i class="fas fa-file-contract mr-3"></i>
+                            <span>License Management</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#settings" class="admin-nav-link flex items-center p-3 rounded-lg text-white hover:bg-blue-600 transition-colors">
+                            <i class="fas fa-cog mr-3"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="p-4 border-t border-blue-800">
+                <button id="logout-btn" class="w-full flex items-center justify-center p-3 rounded-lg text-white hover:bg-red-600 transition-colors">
+                    <i class="fas fa-sign-out-alt mr-3"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Header -->
+            <header class="admin-header p-4 flex items-center justify-between">
+                <div class="flex items-center">
+                    <button id="menu-toggle" class="md:hidden mr-4">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <h2 class="text-xl font-semibold text-gray-800" id="page-title">Dashboard</h2>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <i class="fas fa-bell text-gray-600 text-xl"></i>
+                        <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
+                    </div>
+                    <div class="flex items-center">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Admin" class="w-10 h-10 rounded-full mr-2">
+                        <span class="text-gray-800 font-medium">Admin</span>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Content Area -->
+            <main class="flex-1 overflow-y-auto p-6">
+                <!-- Dashboard Section -->
+                <section id="dashboard" class="admin-section">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="stat-card bg-white p-6 rounded-lg shadow">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500 text-sm">Total Images</p>
+                                    <p class="text-3xl font-bold text-gray-800 mt-2" id="total-images-stat">0</p>
+                                </div>
+                                <div class="bg-blue-100 p-3 rounded-full">
+                                    <i class="fas fa-image text-blue-600 text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card bg-white p-6 rounded-lg shadow">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500 text-sm">Approved Images</p>
+                                    <p class="text-3xl font-bold text-green-600 mt-2" id="approved-images-stat">0</p>
+                                </div>
+                                <div class="bg-green-100 p-3 rounded-full">
+                                    <i class="fas fa-check-circle text-green-600 text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card bg-white p-6 rounded-lg shadow">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500 text-sm">Flagged Images</p>
+                                    <p class="text-3xl font-bold text-orange-600 mt-2" id="flagged-images-stat">0</p>
+                                </div>
+                                <div class="bg-orange-100 p-3 rounded-full">
+                                    <i class="fas fa-exclamation-triangle text-orange-600 text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card bg-white p-6 rounded-lg shadow">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500 text-sm">Categories</p>
+                                    <p class="text-3xl font-bold text-purple-600 mt-2" id="categories-stat">0</p>
+                                </div>
+                                <div class="bg-purple-100 p-3 rounded-full">
+                                    <i class="fas fa-tags text-purple-600 text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="admin-content p-6">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Recent Activity</h3>
+                            <div class="space-y-4" id="recent-activity">
+                                <div class="flex items-start p-3 bg-gray-50 rounded-lg">
+                                    <div class="bg-blue-100 p-2 rounded-full mr-3">
+                                        <i class="fas fa-upload text-blue-600"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-600">2 hours ago</p>
+                                        <p class="font-medium">New image uploaded: Summer Collection 2026</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start p-3 bg-gray-50 rounded-lg">
+                                    <div class="bg-green-100 p-2 rounded-full mr-3">
+                                        <i class="fas fa-check text-green-600"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-600">4 hours ago</p>
+                                        <p class="font-medium">Image "Winter Hoodie" approved by moderation</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start p-3 bg-gray-50 rounded-lg">
+                                    <div class="bg-orange-100 p-2 rounded-full mr-3">
+                                        <i class="fas fa-exclamation text-orange-600"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-600">6 hours ago</p>
+                                        <p class="font-medium">Image flagged for copyright review</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="admin-content p-6">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Moderation Queue</h3>
+                            <div class="space-y-3" id="moderation-queue">
+                                <!-- Moderation items will be loaded dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Gallery Management Section -->
+                <section id="gallery-management" class="admin-section hidden">
+                    <div class="admin-content p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800">Gallery Management</h2>
+                            <button id="add-image-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                                <i class="fas fa-plus mr-2"></i>
+                                Add New Image
+                            </button>
+                        </div>
+                        
+                        <div class="mb-4 flex flex-wrap gap-4">
+                            <input type="text" placeholder="Search images..." class="flex-1 min-w-64 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" id="admin-search">
+                            <select class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" id="admin-category-filter">
+                                <option value="all">All Categories</option>
+                                <option value="approved">Approved</option>
+                                <option value="flagged">Flagged</option>
+                                <option value="pending">Pending</option>
+                            </select>
+                            <button class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                                <i class="fas fa-search mr-2"></i>
+                                Search
+                            </button>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th class="p-3 text-left">Preview</th>
+                                        <th class="p-3 text-left">Title</th>
+                                        <th class="p-3 text-left">Categories</th>
+                                        <th class="p-3 text-left">License</th>
+                                        <th class="p-3 text-left">Status</th>
+                                        <th class="p-3 text-left">Date Added</th>
+                                        <th class="p-3 text-left">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="gallery-table-body">
+                                    <!-- Gallery items will be loaded dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="mt-6 flex items-center justify-between">
+                            <p class="text-gray-600" id="gallery-table-info">Showing 0 of 0 images</p>
+                            <div class="flex gap-2">
+                                <button class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100" id="prev-page">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <button class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100" id="next-page">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Content Moderation Section -->
+                <section id="moderation" class="admin-section hidden">
+                    <div class="admin-content p-6">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6">Content Moderation</h2>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div class="bg-white p-6 rounded-lg shadow">
+                                <h3 class="text-lg font-semibold text-gray-800 mb-4">Moderation Settings</h3>
+                                <div class="space-y-4">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-gray-600">Auto-approve safe content</span>
+                                        <label class="switch">
+                                            <input type="checkbox" checked>
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-gray-600">Flag sensitive content</span>
+                                        <label class="switch">
+                                            <input type="checkbox" checked>
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-gray-600">Require manual review</span>
+                                        <label class="switch">
+                                            <input type="checkbox">
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white p-6 rounded-lg shadow">
+                                <h3 class="text-lg font-semibold text-gray-800 mb-4">Sensitive Topics</h3>
+                                <div class="space-y-2 max-h-64 overflow-y-auto">
+                                    <div class="flex items-center justify-between p-2 bg-gray-50 rounded">
+                                        <span>Violence</span>
+                                        <button class="text-red-500 hover:text-red-700">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center justify-between p-2 bg-gray-50 rounded">
+                                        <span>Adult Content</span>
+                                        <button class="text-red-500 hover:text-red-700">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center justify-between p-2 bg-gray-50 rounded">
+                                        <span>Hate Speech</span>
+                                        <button class="text-red-500 hover:text-red-700">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <button class="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                                    <i class="fas fa-plus mr-2"></i>
+                                    Add Topic
+                                </button>
+                            </div>
+                            
+                            <div class="bg-white p-6 rounded-lg shadow">
+                                <h3 class="text-lg font-semibold text-gray-800 mb-4">Moderation Stats</h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <p class="text-gray-500 text-sm">Total Moderated</p>
+                                        <p class="text-2xl font-bold text-gray-800">1,247</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-500 text-sm">Approval Rate</p>
+                                        <p class="text-2xl font-bold text-green-600">92.4%</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-500 text-sm">Flag Rate</p>
+                                        <p class="text-2xl font-bold text-orange-600">7.6%</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 admin-content p-6">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Flagged Content Review</h3>
+                            <div class="overflow-x-auto">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="p-3 text-left">Image</th>
+                                            <th class="p-3 text-left">Title</th>
+                                            <th class="p-3 text-left">Issues</th>
+                                            <th class="p-3 text-left">Date Flagged</th>
+                                            <th class="p-3 text-left">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="flagged-content-table">
+                                        <!-- Flagged content will be loaded dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Categories & Tags Section -->
+                <section id="categories" class="admin-section hidden">
+                    <div class="admin-content p-6">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6">Categories & Tags Management</h2>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-800 mb-4">Categories</h3>
+                                <div class="mb-4">
+                                    <input type="text" placeholder="New category name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" id="new-category">
+                                    <button class="mt-2 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors" id="add-category-btn">
+                                        <i class="fas fa-plus mr-2"></i>
+                                        Add Category
+                                    </button>
+                                </div>
+                                <div class="space-y-2 max-h-96 overflow-y-auto" id="categories-list">
+                                    <!-- Categories will be loaded dynamically -->
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-800 mb-4">Popular Tags</h3>
+                                <div class="mb-4">
+                                    <input type="text" placeholder="New tag name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" id="new-tag">
+                                    <button class="mt-2 w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition-colors" id="add-tag-btn">
+                                        <i class="fas fa-plus mr-2"></i>
+                                        Add Tag
+                                    </button>
+                                </div>
+                                <div class="flex flex-wrap gap-2 mb-4" id="tags-cloud">
+                                    <!-- Tags will be loaded dynamically -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- License Management Section -->
+                <section id="licenses" class="admin-section hidden">
+                    <div class="admin-content p-6">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6">License Management</h2>
+                        
+                        <div class="mb-6">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">License Compliance</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="bg-white p-4 rounded-lg shadow text-center">
+                                    <p class="text-gray-500 text-sm">CC-BY</p>
+                                    <p class="text-2xl font-bold text-gray-800" id="cc-by-count">0</p>
+                                </div>
+                                <div class="bg-white p-4 rounded-lg shadow text-center">
+                                    <p class="text-gray-500 text-sm">CC-BY-SA</p>
+                                    <p class="text-2xl font-bold text-gray-800" id="cc-by-sa-count">0</p>
+                                </div>
+                                <div class="bg-white p-4 rounded-lg shadow text-center">
+                                    <p class="text-gray-500 text-sm">Public Domain</p>
+                                    <p class="text-2xl font-bold text-gray-800" id="public-domain-count">0</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="admin-content p-6">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">License Settings</h3>
+                            <div class="space-y-4">
+                                <div class="bg-white p-4 rounded-lg shadow">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h4 class="font-medium text-gray-800">Default License</h4>
+                                        <select class="px-3 py-1 border border-gray-300 rounded" id="default-license">
+                                            <option value="CC-BY-4.0">CC-BY-4.0</option>
+                                            <option value="CC-BY-SA-4.0">CC-BY-SA-4.0</option>
+                                            <option value="CC-BY-ND-4.0">CC-BY-ND-4.0</option>
+                                            <option value="Public Domain">Public Domain</option>
+                                        </select>
+                                    </div>
+                                    <p class="text-gray-600 text-sm">This license will be applied to new uploads by default.</p>
+                                </div>
+                                
+                                <div class="bg-white p-4 rounded-lg shadow">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h4 class="font-medium text-gray-800">Require Attribution</h4>
+                                        <label class="switch">
+                                            <input type="checkbox" checked id="require-attribution">
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </div>
+                                    <p class="text-gray-600 text-sm">Require proper attribution for all images.</p>
+                                </div>
+                                
+                                <div class="bg-white p-4 rounded-lg shadow">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h4 class="font-medium text-gray-800">Commercial Use Allowed</h4>
+                                        <label class="switch">
+                                            <input type="checkbox" checked id="allow-commercial">
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </div>
+                                    <p class="text-gray-600 text-sm">Allow images to be used for commercial purposes.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 admin-content p-6">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">License Documentation</h3>
+                            <div class="bg-white p-4 rounded-lg shadow">
+                                <div class="space-y-4">
+                                    <div class="border-b border-gray-200 pb-2">
+                                        <h4 class="font-medium text-gray-800">Creative Commons Licenses</h4>
+                                        <p class="text-gray-600 text-sm mt-1">Standard licenses for content sharing and reuse.</p>
+                                    </div>
+                                    <div class="border-b border-gray-200 pb-2">
+                                        <h4 class="font-medium text-gray-800">Public Domain</h4>
+                                        <p class="text-gray-600 text-sm mt-1">No copyright restrictions, free to use for any purpose.</p>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium text-gray-800">Custom Licenses</h4>
+                                        <p class="text-gray-600 text-sm mt-1">Create custom license agreements for specific use cases.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Settings Section -->
+                <section id="settings" class="admin-section hidden">
+                    <div class="admin-content p-6">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6">System Settings</h2>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-800 mb-4">General Settings</h3>
+                                <div class="bg-white p-4 rounded-lg shadow space-y-4">
+                                    <div>
+                                        <label class="block text-gray-700 text-sm font-medium mb-2">Site Title</label>
+                                        <input type="text" value="MAKA Gallery" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-gray-700 text-sm font-medium mb-2">Site Description</label>
+                                        <textarea rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">Exclusive fashion gallery with proper licensing and compliance</textarea>
+                                    </div>
+                                    <div>
+                                        <label class="block text-gray-700 text-sm font-medium mb-2">Default Language</label>
+                                        <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                            <option value="en">English</option>
+                                            <option value="es">Spanish</option>
+                                            <option value="fr">French</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-800 mb-4">Gallery Settings</h3>
+                                <div class="bg-white p-4 rounded-lg shadow space-y-4">
+                                    <div>
+                                        <label class="block text-gray-700 text-sm font-medium mb-2">Images Per Page</label>
+                                        <input type="number" value="12" min="6" max="50" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-gray-700 text-sm font-medium mb-2">Default View</label>
+                                        <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                            <option value="grid">Grid View</option>
+                                            <option value="list">List View</option>
+                                            <option value="masonry">Masonry View</option>
+                                        </select>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input type="checkbox" id="enable-lazy-load" class="mr-2" checked>
+                                        <label for="enable-lazy-load" class="text-gray-700">Enable Lazy Loading</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">API Integration</h3>
+                            <div class="bg-white p-4 rounded-lg shadow space-y-4">
+                                <div>
+                                    <label class="block text-gray-700 text-sm font-medium mb-2">AI Moderation API Key</label>
+                                    <input type="password" placeholder="Enter API key" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 text-sm font-medium mb-2">Image Storage API</label>
+                                    <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option value="local">Local Storage</option>
+                                        <option value="aws">AWS S3</option>
+                                        <option value="cloudinary">Cloudinary</option>
+                                    </select>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="auto-update" class="mr-2" checked>
+                                    <label for="auto-update" class="text-gray-700">Enable Auto Updates</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 flex justify-end">
+                            <button class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors">
+                                <i class="fas fa-save mr-2"></i>
+                                Save Settings
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+    
+    <!-- Add Image Modal -->
+    <div id="add-image-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl">
+                <div class="p-6 border-b border-gray-200 flex items-center justify-between">
+                    <h3 class="text-xl font-semibold text-gray-800">Add New Image</h3>
+                    <button id="close-modal" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <div class="p-6">
+                    <form id="add-image-form" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-gray-700 text-sm font-medium mb-2">Image Title</label>
+                                <input type="text" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 text-sm font-medium mb-2">Image URL</label>
+                                <input type="url" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-700 text-sm font-medium mb-2">Description</label>
+                            <textarea rows="3" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-gray-700 text-sm font-medium mb-2">Categories</label>
+                                <select multiple class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="Kids">Kids</option>
+                                    <option value="Adults">Adults</option>
+                                    <option value="Hoodies">Hoodies</option>
+                                    <option value="Jackets">Jackets</option>
+                                    <option value="T-Shirts">T-Shirts</option>
+                                    <option value="Accessories">Accessories</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 text-sm font-medium mb-2">Tags (comma separated)</label>
+                                <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-gray-700 text-sm font-medium mb-2">License</label>
+                                <select required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="CC-BY-4.0">CC-BY-4.0</option>
+                                    <option value="CC-BY-SA-4.0">CC-BY-SA-4.0</option>
+                                    <option value="CC-BY-ND-4.0">CC-BY-ND-4.0</option>
+                                    <option value="Public Domain">Public Domain</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 text-sm font-medium mb-2">Source</label>
+                                <input type="text" value="MAKA Collection" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            <input type="checkbox" id="auto-moderate" class="mr-2" checked>
+                            <label for="auto-moderate" class="text-gray-700">Run automatic moderation</label>
+                        </div>
+                        
+                        <div class="flex justify-end space-x-3">
+                            <button type="button" id="cancel-add-image" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors">
+                                Cancel
+                            </button>
+                            <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                                <i class="fas fa-upload mr-2"></i>
+                                Upload Image
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Image Detail Modal -->
+    <div id="image-detail-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-3xl">
+                <div class="p-6 border-b border-gray-200 flex items-center justify-between">
+                    <h3 class="text-xl font-semibold text-gray-800" id="detail-modal-title">Image Details</h3>
+                    <button id="close-detail-modal" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <div class="p-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <img id="detail-modal-image" src="" alt="" class="w-full rounded-lg shadow-md">
+                        </div>
+                        <div class="space-y-4">
+                            <div>
+                                <h4 class="font-medium text-gray-800">Title</h4>
+                                <p id="detail-modal-title-text" class="text-gray-600"></p>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-800">Description</h4>
+                                <p id="detail-modal-description" class="text-gray-600 text-sm"></p>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-800">Categories</h4>
+                                <div id="detail-modal-categories" class="flex flex-wrap gap-2"></div>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-800">Tags</h4>
+                                <div id="detail-modal-tags" class="flex flex-wrap gap-2"></div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <h4 class="font-medium text-gray-800">License</h4>
+                                    <p id="detail-modal-license" class="text-gray-600"></p>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-gray-800">Source</h4>
+                                    <p id="detail-modal-source" class="text-gray-600"></p>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-800">Status</h4>
+                                <p id="detail-modal-status" class="text-gray-600"></p>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-800">Date Added</h4>
+                                <p id="detail-modal-date" class="text-gray-600"></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 border-t border-gray-200 pt-4 flex justify-end space-x-3">
+                        <button id="edit-image-btn" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors">
+                            <i class="fas fa-edit mr-2"></i>
+                            Edit
+                        </button>
+                        <button id="delete-image-btn" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                            <i class="fas fa-trash mr-2"></i>
+                            Delete
+                        </button>
+                        <button id="close-detail-btn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="module" src="adminDashboard.js"></script>
+    
+    <style>
+        /* Custom Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: #46A9F8;
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        /* Admin Section Visibility */
+        .admin-section {
+            display: none;
+        }
+        
+        .admin-section.active {
+            display: block;
+        }
+        
+        /* Admin Nav Link Active State */
+        .admin-nav-link.active {
+            background: rgba(255, 255, 255, 0.2);
+            border-left: 3px solid #46A9F8;
+        }
+        
+        /* Tag Styles */
+        .tag-item {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .category-item {
+            background: #f3e8ff;
+            color: #7e22ce;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+                position: fixed;
+                z-index: 40;
+                transition: transform 0.3s ease;
+            }
+            
+            .admin-sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .admin-content {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
+    </style>
+</body>
+</html>
