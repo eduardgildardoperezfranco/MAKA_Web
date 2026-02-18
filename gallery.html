@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en" data-i18n-lang>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="MAKA Gallery - Explore our exclusive fashion collection. All products available for consultation via WhatsApp.">
+    <meta name="keywords" content="MAKA, fashion, gallery, hoodies, jackets, kids fashion, exclusive clothing">
+    <meta name="author" content="Carolina Perez Franco">
+    <meta name="robots" content="index, follow">
+    <title>MAKA Gallery - Exclusive Fashion Collection</title>
+    <link rel="icon" href="MAKA%203D.jpeg" type="image/jpeg">
+    <link rel="stylesheet" href="Style.css?v=1">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* Gallery Page Specific Styles */
+        .gallery-page-header {
+            background: linear-gradient(135deg, rgba(10, 29, 110, 0.95), rgba(33, 96, 196, 0.9));
+            padding: 6rem 2rem 3rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .gallery-page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+        
+        .gallery-page-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .back-to-home {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary-glow);
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .back-to-home:hover {
+            color: white;
+        }
+        
+        /* Product count badge */
+        .product-count {
+            display: inline-block;
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+        
+        /* Inline Gallery Styles */
+        .maka-gallery-container {
+            width: 100%;
+            padding: 1rem;
+        }
+        
+        .maka-gallery-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .maka-gallery-title {
+            font-size: 1.8rem;
+            color: var(--primary-glow);
+            margin-bottom: 0.5rem;
+        }
+        
+        .maka-gallery-subtitle {
+            color: var(--text-surface);
+            opacity: 0.8;
+        }
+        
+        .maka-gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            padding: 1rem 0;
+        }
+        
+        .maka-gallery-item {
+            position: relative;
+            background: linear-gradient(145deg, rgba(10, 29, 110, 0.6), rgba(33, 96, 196, 0.4));
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(70, 169, 248, 0.2);
+        }
+        
+        .maka-gallery-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 30px rgba(70, 169, 248, 0.2);
+            border-color: rgba(70, 169, 248, 0.5);
+        }
+        
+        .gallery-item-inner {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .gallery-image-container {
+            position: relative;
+            aspect-ratio: 1/1;
+            overflow: hidden;
+        }
+        
+        .gallery-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .maka-gallery-item:hover .gallery-image {
+            transform: scale(1.08);
+        }
+        
+        .product-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: white;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            z-index: 2;
+        }
+        
+        .image-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 1rem;
+            gap: 0.5rem;
+        }
+        
+        .maka-gallery-item:hover .image-overlay {
+            opacity: 1;
+        }
+        
+        .view-details-btn, .fullscreen-btn {
+            background: linear-gradient(135deg, var(--primary-base), var(--primary-glow));
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .view-details-btn:hover, .fullscreen-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .whatsapp-quick-buy {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            width: 44px;
+            height: 44px;
+            background: #25D366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.3rem;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.3s ease;
+            z-index: 3;
+            text-decoration: none;
+        }
+        
+        .maka-gallery-item:hover .whatsapp-quick-buy {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .whatsapp-quick-buy:hover {
+            background: #128C7E;
+            transform: scale(1.1);
+        }
+        
+        .gallery-item-info {
+            padding: 1rem;
+        }
+        
+        .gallery-item-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+        
+        .gallery-item-badges {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .category-badge {
+            background: rgba(70, 169, 248, 0.2);
+            color: var(--primary-glow);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+        }
+        
+        .gallery-item-description {
+            font-size: 0.85rem;
+            color: var(--text-surface);
+            opacity: 0.7;
+            line-height: 1.4;
+        }
+        
+        /* Loading State */
+        .gallery-loading {
+            grid-column: 1 / -1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            color: var(--text-surface);
+        }
+        
+        .gallery-loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(70, 169, 248, 0.2);
+            border-top-color: var(--primary-glow);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Error State */
+        .gallery-error {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 2rem;
+            color: #ef4444;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .maka-gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .maka-gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+            
+            .gallery-page-header {
+                padding: 5rem 1rem 2rem;
+            }
+            
+            .gallery-page-title {
+                font-size: 1.8rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .maka-gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+            
+            .gallery-item-info {
+                padding: 0.75rem;
+            }
+            
+            .gallery-item-title {
+                font-size: 0.85rem;
+            }
+            
+            .gallery-item-description {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="Index.html" class="nav-logo" aria-label="MAKA Home">
+                <video class="brand-video" src="Maka_Animated.mp4" autoplay muted loop playsinline preload="metadata" poster="MAKA 3D.jpeg"></video>
+            </a>
+            <ul class="nav-menu" id="nav-menu">
+                <div class="close-menu" id="close-menu" aria-label="Close menu">&times;</div>
+                <li class="nav-item"><a href="Index.html#home" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="Index.html#about" class="nav-link">About</a></li>
+                <li class="nav-item"><a href="Index.html#products" class="nav-link">Store</a></li>
+                <li class="nav-item"><a href="gallery.html" class="nav-link">Gallery</a></li>
+                <li class="nav-item"><a href="Index.html#contact" class="nav-link">Contact</a></li>
+                <li class="nav-item"><a href="https://wa.me/573142274000?text=Hola%20MAKA" target="_blank" rel="noopener noreferrer" class="nav-link">WhatsApp</a></li>
+            </ul>
+            <div class="hamburger" id="hamburger" role="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="menu-backdrop" id="menu-backdrop"></div>
+        </div>
+    </nav>
+
+    <!-- Gallery Page Header -->
+    <header class="gallery-page-header">
+        <a href="Index.html" class="back-to-home">
+            <i class="fas fa-arrow-left"></i>
+            Back to Home
+        </a>
+        <h1 class="gallery-page-title">MAKA Collection</h1>
+        <p class="gallery-page-subtitle">Explore our complete catalog of exclusive fashion pieces. Click on any product to inquire via WhatsApp.</p>
+        <span class="product-count" id="product-count">Loading products...</span>
+    </header>
+
+    <!-- Gallery Container -->
+    <main class="container">
+        <div class="maka-gallery-container" id="maka-gallery">
+            <div class="maka-gallery-header">
+                <h2 class="maka-gallery-title">Colección Exclusiva</h2>
+                <p class="maka-gallery-subtitle">Descubre nuestra selección de moda premium</p>
+            </div>
+            <div class="maka-gallery-grid" id="gallery-grid">
+                <div class="gallery-loading">
+                    <div class="gallery-loading-spinner"></div>
+                    <p>Cargando productos...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img src="MAKA 3D.jpeg" alt="MAKA Logo">
+            </div>
+            <p class="footer-copyright">© 2025 MAKA. Operating under Andean Decision 486.
+                <a href="terms.html" class="footer-link">Legal & Terms</a>. By Carolina Perez Franco</p>
+            <p class="footer-version">Version 0.2.0</p>
+            <a href="https://wa.me/573142274000" class="whatsapp-help" target="_blank" rel="noopener noreferrer">
+                <i class="fab fa-whatsapp"></i>
+                <span class="tooltip">I can help you, just ask me</span>
+            </a>
+        </div>
+    </footer>
+
+    <!-- Gallery Data & Script - No ES Modules, works everywhere -->
+    <script>
+        // Gallery Data - Embedded for maximum compatibility
+        const GALLERY_DATA = [
+            { image: "src/Assets/Gallery Pictures/Beisball_Hoodie_For_Kids.png", badge: "Kids Exclusive", message: "Swing for the stars. Baseball style for young champs." },
+            { image: "src/Assets/Gallery Pictures/Beisball_Jacket_For_Kids.png", badge: "Adventure Ready", message: "Gear up for victory. Jacket that champions play." },
+            { image: "src/Assets/Gallery Pictures/Black_Green_Hoodie.png", badge: "Urban Edge", message: "Dark and vibrant. Command the streets with contrast." },
+            { image: "src/Assets/Gallery Pictures/Black_Hoodie_whit_green.png", badge: "Youth Power", message: "Light up the darkness. Hollister for the bold kids." },
+            { image: "src/Assets/Gallery Pictures/Black_Model_with_Zip.jpeg", badge: "Zip Authority", message: "Seal your style. Zipped for ultimate control." },
+            { image: "src/Assets/Gallery Pictures/Black_Model_with_Zip0.1.jpeg", badge: "Refined Zip", message: "Precision in black. Zip into perfection." },
+            { image: "src/Assets/Gallery Pictures/Black_Orange_Hoodie.png", badge: "Bold Contrast", message: "Black meets orange. SuperDry for the fearless." },
+            { image: "src/Assets/Gallery Pictures/Black_white_Hoodie.png", badge: "Classic Black", message: "Timeless darkness. SuperDry elegance redefined." },
+            { image: "src/Assets/Gallery Pictures/BlackWhite_Hoodie.png", badge: "Monochrome Mastery", message: "Black and white fusion. SuperDry duality." },
+            { image: "src/Assets/Gallery Pictures/Black_Hoodie.png", badge: "Balanced Power", message: "Harmony in hues. SuperDry balance." },
+            { image: "src/Assets/Gallery Pictures/Blue_Champion_Hoodie_For_Kids.png", badge: "Champion Kids", message: "Blue victory. Champion spirit for little winners." },
+            { image: "src/Assets/Gallery Pictures/Blue_Hoodie.png", badge: "Ocean Calm", message: "Dive into blue. SuperDry serenity." },
+            { image: "src/Assets/Gallery Pictures/Blue_For_Kids.png", badge: "Kids Blue Wave", message: "Ride the blue wave. SuperDry for young explorers." },
+            { image: "src/Assets/Gallery Pictures/Brown_and Pink_Hoodies.jpeg", badge: "Earthy Romance", message: "Brown and pink blend. Hoodies for the romantic soul." },
+            { image: "src/Assets/Gallery Pictures/Brown_Hoodie_For_Kids.png", badge: "Nature's Child", message: "Brown earth tones. SuperDry for grounded kids." },
+            { image: "src/Assets/Gallery Pictures/Blue_and_White_Jacket_For_Kids_Opened.png", badge: "Sky Columbia", message: "Blue skies ahead. Columbia for youthful journeys." },
+            { image: "src/Assets/Gallery Pictures/Black_Jacket_For_Kids_Opened.png", badge: "Black Columbia", message: "Dark exploration. Columbia jacket for bold kids." },
+            { image: "src/Assets/Gallery Pictures/Columbia_Green_Jacket_For_Kids.png", badge: "Eco Columbia", message: "Green guardian. Columbia for eco-kids." },
+            { image: "src/Assets/Gallery Pictures/Red_Jacket_For_Kids_Opened.png", badge: "Red Energy", message: "Fiery red. Columbia jacket for energetic kids." },
+            { image: "src/Assets/Gallery Pictures/Yellow_Jacket_For_Kids.png", badge: "Bright Columbia", message: "Vibrant yellow. Columbia jacket for bright futures." },
+            { image: "src/Assets/Gallery Pictures/Yellow_Jacket_For_Kids_Opened.png", badge: "Sunny Columbia", message: "Yellow sunshine. Columbia for happy explorers." },
+            { image: "src/Assets/Gallery Pictures/Adults_Jackets.jpeg", badge: "Adult Columbia", message: "Mature adventures. Columbia for the seasoned explorer." },
+            { image: "src/Assets/Gallery Pictures/Jakets_for_Kids.jpeg", badge: "Kids Columbia", message: "Young pioneers. Columbia for little adventurers." },
+            { image: "src/Assets/Gallery Pictures/Light__purple_Hoodie.jpeg", badge: "Purple Elegance", message: "Light purple mystery. Model for the enigmatic." },
+            { image: "src/Assets/Gallery Pictures/Modelo light Claro con capota.png", badge: "Light Model", message: "Light and clear. Model with hood." },
+            { image: "src/Assets/Gallery Pictures/Gray_Blue_Hoodie.png", badge: "Gray Blue Mix", message: "Gray meets blue. SuperDry tranquility." },
+            { image: "src/Assets/Gallery Pictures/Gray_Hoodie_For_Kids.png", badge: "Polo Gray", message: "Gray polo. Hoodie for young professionals." },
+            { image: "src/Assets/Gallery Pictures/Green_Hoodie_black.png", badge: "Green Black", message: "Green on black. SuperDry contrast." },
+            { image: "src/Assets/Gallery Pictures/Green_Hoodie.jpeg", badge: "Pure Green", message: "Vivid green. SuperDry freshness." },
+            { image: "src/Assets/Gallery Pictures/Green_Jacket_For_Kids_Opened.png", badge: "Black Green", message: "Black with green. SuperDry edge." },
+            { image: "src/Assets/Gallery Pictures/Ligh_Green_Hoodie_With_Zip.jpeg", badge: "Light Green Zip", message: "Light green zip. SuperDry versatility." },
+            { image: "src/Assets/Gallery Pictures/Light_Brown.jpeg", badge: "Light Brown", message: "Soft brown. SuperDry warmth." },
+            { image: "src/Assets/Gallery Pictures/Light_Orange_Hoodie.png", badge: "Light Orange", message: "Gentle orange. SuperDry energy." },
+            { image: "src/Assets/Gallery Pictures/Light_Purple_Hoodie.png", badge: "Light Purple", message: "Subtle purple. SuperDry mystery." },
+            { image: "src/Assets/Gallery Pictures/Light_Yellow_Hoddie.png", badge: "Light Yellow", message: "Bright yellow. Hoodie for joy." },
+            { image: "src/Assets/Gallery Pictures/Light_Yellow_Hoddie (2).png", badge: "SuperDry Yellow", message: "Light yellow. SuperDry sunshine." },
+            { image: "src/Assets/Gallery Pictures/Lime_Hoddie_For_Kids.png", badge: "Lime Kids", message: "Lime green. Hollister for fun kids." },
+            { image: "src/Assets/Gallery Pictures/Orange_Hoodie_For_Kids.png", badge: "Orange Hollister", message: "Vibrant orange. Hollister for energetic kids." },
+            { image: "src/Assets/Gallery Pictures/Orange_Hoodie_For_Kids1.png", badge: "Orange Variant", message: "Orange twist. Hollister style." },
+            { image: "src/Assets/Gallery Pictures/Orange_Hoodie.png", badge: "Orange SuperDry", message: "Bold orange. SuperDry passion." },
+            { image: "src/Assets/Gallery Pictures/Pink_model_Hoodie.png", badge: "Pink Model", message: "Pink elegance. Model for grace." },
+            { image: "src/Assets/Gallery Pictures/Pink_Hoodie_ Model.png", badge: "Pink Parts", message: "Pink with details. SuperDry charm." },
+            { image: "src/Assets/Gallery Pictures/Pink_Hoddie.jpeg", badge: "Pink Hoodie", message: "Sweet pink. SuperDry femininity." },
+            { image: "src/Assets/Gallery Pictures/Pink_Hoodie.jpeg", badge: "Pink SuperDry", message: "Pink power. SuperDry softness." },
+            { image: "src/Assets/Gallery Pictures/Hoodie_for_Kids (2).png", badge: "Polo Kids", message: "Classic polo. Hoodie for young." },
+            { image: "src/Assets/Gallery Pictures/Red_Hoodie_For_Kids.png", badge: "Red Kids", message: "Fiery red. SuperDry for bold kids." },
+            { image: "src/Assets/Gallery Pictures/Referencia_Color verde_de Cremallera.jpeg", badge: "Green Zip Ref", message: "Green zipper. Reference for style." },
+            { image: "src/Assets/Gallery Pictures/Salmon.png", badge: "Brand Ref 2", message: "Second brand. Style reference." },
+            { image: "src/Assets/Gallery Pictures/Female_Hoodie_Style.png", badge: "Female Style", message: "Feminine touch. SuperDry for her." },
+            { image: "src/Assets/Gallery Pictures/White_Black_Hoodie.png", badge: "White Black", message: "White on black. SuperDry contrast." },
+            { image: "src/Assets/Gallery Pictures/White_Blakc_Hoddie.jpeg", badge: "White Black Var", message: "White black. SuperDry variant." },
+            { image: "src/Assets/Gallery Pictures/White_For_Kids (2).png", badge: "White Champion", message: "Pure white. Champion for kids." },
+            { image: "src/Assets/Gallery Pictures/White_For_Kids.png", badge: "White Kids", message: "Clean white. SuperDry for young." },
+            { image: "src/Assets/Gallery Pictures/Withe_for_Kids.png", badge: "White Variant", message: "White style. SuperDry kids." },
+            { image: "src/Assets/Gallery Pictures/Yellow_For_Kids.png", badge: "Yellow Champion", message: "Sunny yellow. Champion kids." },
+            { image: "src/Assets/Gallery Pictures/Yellow_Hoodie_for_Kids.png", badge: "Yellow Kids", message: "Bright yellow. SuperDry fun." },
+            { image: "src/Assets/Gallery Pictures/Yellow_Hoodie_with_Zip.png", badge: "Yellow Zip", message: "Yellow with zip. SuperDry ready." },
+            { image: "src/Assets/Gallery Pictures/Black_Jacket_and_Blue_Jacket_For_Kids_Opened.png", badge: "Columbia Adventure", message: "Black and blue expedition. Jacket for young adventurers." },
+            { image: "src/Assets/Gallery Pictures/Black_Light_Green_Hollister_Hoodie_for_Kids.png", badge: "Hollister Youth", message: "Light green Hollister hoodie for kids." },
+            { image: "src/Assets/Gallery Pictures/Hoodie_for_Kids.png", badge: "Hoodie Kids", message: "Classic hoodie for young ones." },
+            { image: "src/Assets/Gallery Pictures/Green_Black_Hoodie.png", badge: "Green Black Mix", message: "Green and black combination for bold style." }
+        ];
+
+        // Initialize gallery immediately
+        function initGallery() {
+            const grid = document.getElementById('gallery-grid');
+            const countEl = document.getElementById('product-count');
+            
+            if (!grid) return;
+            
+            // Clear loading
+            grid.innerHTML = '';
+            
+            // Create placeholder SVG
+            const placeholderSvg = `data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400"><rect fill="#0A1D6E" width="400" height="400"/><text fill="#46A9F8" font-family="Arial" font-size="24" text-anchor="middle" x="200" y="180">MAKA</text><text fill="#fff" font-family="Arial" font-size="14" text-anchor="middle" x="200" y="220">Product</text></svg>')}`;
+            
+            // Render each product
+            GALLERY_DATA.forEach((item, index) => {
+                // Normalize path
+                let imagePath = item.image.replace(/[\\]+/g, '/');
+                
+                // Get categories from filename
+                const filename = imagePath.split('/').pop() || '';
+                const nameLower = filename.toLowerCase();
+                const categories = [];
+                if (nameLower.includes('kids')) categories.push('Kids');
+                if (nameLower.includes('adult')) categories.push('Adults');
+                if (nameLower.includes('hoodie')) categories.push('Hoodies');
+                if (nameLower.includes('jacket')) categories.push('Jackets');
+                if (categories.length === 0) categories.push('Fashion');
+                
+                // WhatsApp link
+                const whatsappMessage = encodeURIComponent(`Hola MAKA, me interesa este producto: ${item.badge}. ¿Tienen disponibilidad?`);
+                const whatsappLink = `https://wa.me/573142274000?text=${whatsappMessage}`;
+                
+                const productCard = document.createElement('div');
+                productCard.className = 'maka-gallery-item';
+                productCard.innerHTML = `
+                    <div class="gallery-item-inner">
+                        <div class="gallery-image-container">
+                            <span class="product-badge">${item.badge}</span>
+                            <img src="${imagePath}" alt="${item.badge}" class="gallery-image" loading="lazy" 
+                                 onerror="this.onerror=null; this.src='${placeholderSvg}';">
+                            <div class="image-overlay">
+                                <button class="view-details-btn" onclick="event.stopPropagation(); showDetails(${index});">Ver Detalles</button>
+                                <button class="fullscreen-btn" onclick="event.stopPropagation(); showFullscreen(${index});">
+                                    <i class="fas fa-expand"></i>
+                                </button>
+                            </div>
+                            <a href="${whatsappLink}" target="_blank" rel="noopener noreferrer" class="whatsapp-quick-buy" onclick="event.stopPropagation();" title="Consultar por WhatsApp">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
+                        </div>
+                        <div class="gallery-item-info">
+                            <h3 class="gallery-item-title">${item.badge}</h3>
+                            <div class="gallery-item-badges">
+                                ${categories.slice(0, 2).map(cat => `<span class="category-badge">${cat}</span>`).join('')}
+                            </div>
+                            <p class="gallery-item-description">${item.message.substring(0, 80)}${item.message.length > 80 ? '...' : ''}</p>
+                        </div>
+                    </div>
+                `;
+                
+                // Click to show fullscreen
+                productCard.addEventListener('click', () => showFullscreen(index));
+                
+                grid.appendChild(productCard);
+            });
+            
+            // Update count
+            if (countEl) {
+                countEl.textContent = `${GALLERY_DATA.length} Exclusive Products`;
+            }
+        }
+        
+        // Show fullscreen image
+        function showFullscreen(index) {
+            const item = GALLERY_DATA[index];
+            let imagePath = item.image.replace(/[\\]+/g, '/');
+            
+            const fullscreen = document.createElement('div');
+            fullscreen.className = 'gallery-fullscreen';
+            fullscreen.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.95);z-index:9999;display:flex;align-items:center;justify-content:center;padding:2rem;cursor:pointer;';
+            
+            fullscreen.innerHTML = `
+                <button style="position:absolute;top:20px;right:20px;background:none;border:none;color:white;font-size:2rem;cursor:pointer;">&times;</button>
+                <img src="${imagePath}" alt="${item.badge}" style="max-width:90vw;max-height:85vh;object-fit:contain;border-radius:12px;">
+            `;
+            
+            document.body.appendChild(fullscreen);
+            document.body.style.overflow = 'hidden';
+            
+            const closeFullscreen = () => {
+                fullscreen.remove();
+                document.body.style.overflow = '';
+            };
+            
+            fullscreen.querySelector('button').addEventListener('click', closeFullscreen);
+            fullscreen.addEventListener('click', (e) => {
+                if (e.target === fullscreen) closeFullscreen();
+            });
+            
+            const escHandler = (e) => {
+                if (e.key === 'Escape') {
+                    closeFullscreen();
+                    document.removeEventListener('keydown', escHandler);
+                }
+            };
+            document.addEventListener('keydown', escHandler);
+        }
+        
+        // Show details modal
+        function showDetails(index) {
+            const item = GALLERY_DATA[index];
+            let imagePath = item.image.replace(/[\\]+/g, '/');
+            
+            // Get categories
+            const filename = imagePath.split('/').pop() || '';
+            const nameLower = filename.toLowerCase();
+            const categories = [];
+            if (nameLower.includes('kids')) categories.push('Kids');
+            if (nameLower.includes('adult')) categories.push('Adults');
+            if (nameLower.includes('hoodie')) categories.push('Hoodies');
+            if (nameLower.includes('jacket')) categories.push('Jackets');
+            if (categories.length === 0) categories.push('Fashion');
+            
+            const modal = document.createElement('div');
+            modal.className = 'gallery-modal';
+            modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);z-index:9999;display:flex;align-items:center;justify-content:center;padding:2rem;';
+            
+            modal.innerHTML = `
+                <div style="background:linear-gradient(145deg,#0A1D6E,#2160C4);border-radius:16px;max-width:600px;width:100%;padding:2rem;position:relative;">
+                    <button style="position:absolute;top:10px;right:10px;background:none;border:none;color:white;font-size:1.5rem;cursor:pointer;">&times;</button>
+                    <img src="${imagePath}" alt="${item.badge}" style="width:100%;border-radius:12px;margin-bottom:1rem;">
+                    <h3 style="color:white;font-size:1.5rem;margin-bottom:0.5rem;">${item.badge}</h3>
+                    <p style="color:rgba(255,255,255,0.8);margin-bottom:1rem;">${item.message}</p>
+                    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                        ${categories.map(cat => `<span style="background:rgba(70,169,248,0.2);color:#46A9F8;padding:0.3rem 0.6rem;border-radius:4px;font-size:0.8rem;">${cat}</span>`).join('')}
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            document.body.style.overflow = 'hidden';
+            
+            const closeModal = () => {
+                modal.remove();
+                document.body.style.overflow = '';
+            };
+            
+            modal.querySelector('button').addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) closeModal();
+            });
+            
+            const escHandler = (e) => {
+                if (e.key === 'Escape') {
+                    closeModal();
+                    document.removeEventListener('keydown', escHandler);
+                }
+            };
+            document.addEventListener('keydown', escHandler);
+        }
+        
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initGallery);
+        } else {
+            initGallery();
+        }
+    </script>
+</body>
+
+</html>

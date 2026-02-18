@@ -236,27 +236,193 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Countdown Timer
-  function updateCountdown() {
+  // ============================================
+  // ENHANCED COUNTDOWN TIMER
+  // 15 Days + 2 Hours - LIVE from page load
+  // ============================================
+  
+  // Set drop time: 15 days and 2 hours from NOW (live each visit)
+  const dropStartTime = new Date().getTime();
+  const dropDuration = (15 * 24 * 60 * 60 * 1000) + (2 * 60 * 60 * 1000); // 15 days + 2 hours in milliseconds
+  const dropEndTime = dropStartTime + dropDuration;
+  
+  function updateEnhancedCountdown() {
     const now = new Date().getTime();
-    // Set next Friday 12 PM
-    const nextFriday = new Date();
-    nextFriday.setDate(nextFriday.getDate() + (5 - nextFriday.getDay() + 7) % 7);
-    nextFriday.setHours(12, 0, 0, 0);
-    const distance = nextFriday - now;
+    const distance = dropEndTime - now;
+    
+    // Get countdown elements
+    const daysEl = document.getElementById('countdown-days');
+    const hoursEl = document.getElementById('countdown-hours');
+    const minutesEl = document.getElementById('countdown-minutes');
+    const secondsEl = document.getElementById('countdown-seconds');
+    
+    if (!daysEl || !hoursEl || !minutesEl || !secondsEl) return;
+    
+    if (distance < 0) {
+      // Drop is live!
+      daysEl.textContent = '00';
+      hoursEl.textContent = '00';
+      minutesEl.textContent = '00';
+      secondsEl.textContent = '00';
+      
+      // Show drop live message
+      const countdownContainer = document.querySelector('.drop-countdown-container');
+      if (countdownContainer && !document.querySelector('.drop-live-message')) {
+        countdownContainer.innerHTML = `
+          <div class="drop-live-message" style="text-align: center; padding: 2rem;">
+            <h2 style="font-size: 2.5rem; color: #46A9F8; margin-bottom: 1rem;">🔥 DROP IS LIVE!</h2>
+            <p style="color: white; font-size: 1.2rem; margin-bottom: 1.5rem;">The exclusive collection is now available!</p>
+            <a href="#maka-gallery" style="display: inline-block; padding: 1rem 2rem; background: linear-gradient(135deg, #46A9F8, #05DBF2); color: #0A1D6E; text-decoration: none; border-radius: 50px; font-weight: 700; text-transform: uppercase;">
+              Shop Now →
+            </a>
+          </div>
+        `;
+      }
+      return;
+    }
+    
+    // Calculate time units
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
     const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-    const countdownEl = document.getElementById('countdown');
-    if (countdownEl) {
-      countdownEl.innerHTML = hours.toString().padStart(2, '0') + ':' + minutes.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0');
-      if (distance < 0) {
-        countdownEl.innerHTML = 'DROP LIVE!';
-      }
+    
+    // Update display with animation
+    updateCountdownValue(daysEl, days);
+    updateCountdownValue(hoursEl, hours);
+    updateCountdownValue(minutesEl, minutes);
+    updateCountdownValue(secondsEl, seconds);
+  }
+  
+  function updateCountdownValue(element, value) {
+    const formattedValue = value.toString().padStart(2, '0');
+    if (element.textContent !== formattedValue) {
+      element.style.transform = 'scale(1.1)';
+      element.textContent = formattedValue;
+      setTimeout(() => {
+        element.style.transform = 'scale(1)';
+      }, 100);
     }
   }
-  setInterval(updateCountdown, 1000);
-  updateCountdown(); // Initial call
+  
+  // Update countdown every second
+  setInterval(updateEnhancedCountdown, 1000);
+  updateEnhancedCountdown(); // Initial call
+
+  // ============================================
+  // WAITLIST FORM - WHATSAPP REDIRECTION
+  // Redirects to Carolina's WhatsApp
+  // ============================================
+  const waitlistForm = document.getElementById('waitlist-form');
+  const waitlistEmail = document.getElementById('waitlist-email');
+  const waitlistPhone = document.getElementById('waitlist-phone');
+  const waitlistCountEl = document.getElementById('waitlist-count');
+  
+  // Carolina's WhatsApp number
+  const CAROLINA_WHATSAPP = '+573142274000';
+  
+  // Initialize waitlist count from localStorage or set default
+  let waitlistCount = parseInt(localStorage.getItem('makaWaitlistCount') || '1247', 10);
+  if (waitlistCountEl) {
+    waitlistCountEl.textContent = waitlistCount.toLocaleString();
+  }
+  
+  if (waitlistForm) {
+    waitlistForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const email = waitlistEmail.value.trim();
+      const phone = waitlistPhone.value.trim();
+      
+      // Validate email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!email) {
+        showNotification('Please enter your email address', 'error');
+        return;
+      }
+      if (!emailRegex.test(email)) {
+        showNotification('Please enter a valid email address', 'error');
+        return;
+      }
+      
+      // Validate phone
+      if (!phone) {
+        showNotification('Please enter your WhatsApp number', 'error');
+        return;
+      }
+      // Basic phone validation
+      const phoneRegex = /^[\+]?[0-9\s\-\(\)]{7,20}$/;
+      if (!phoneRegex.test(phone)) {
+        showNotification('Please enter a valid phone number', 'error');
+        return;
+      }
+      
+      // Increment count
+      waitlistCount++;
+      localStorage.setItem('makaWaitlistCount', waitlistCount.toString());
+      
+      // Update display
+      if (waitlistCountEl) {
+        waitlistCountEl.textContent = waitlistCount.toLocaleString();
+      }
+      
+      // Create WhatsApp message
+      const message = `🔥 *MAKA WAITLIST REGISTRATION*
+
+Hello! I want to join the exclusive MAKA drop waitlist!
+
+📧 *Email:* ${email}
+📱 *WhatsApp:* ${phone}
+🔢 *Position:* #${waitlistCount.toLocaleString()}
+
+Please confirm my spot on the waitlist for early access to the upcoming exclusive drop! 🚀`;
+      
+      // Encode message for URL
+      const encodedMessage = encodeURIComponent(message);
+      
+      // Create WhatsApp URL
+      const whatsappUrl = `https://wa.me/${CAROLINA_WHATSAPP.replace(/\D/g, '')}?text=${encodedMessage}`;
+      
+      // Show success notification
+      showNotification('Redirecting to WhatsApp...', 'success');
+      
+      // Redirect to WhatsApp after short delay
+      setTimeout(() => {
+        window.open(whatsappUrl, '_blank');
+      }, 500);
+      
+      // Clear form
+      waitlistEmail.value = '';
+      waitlistPhone.value = '';
+      
+      console.log('Waitlist signup:', { email, phone, position: waitlistCount });
+    });
+  }
+  
+  // Notification helper
+  function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = 'gallery-notification';
+    notification.style.cssText = `
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      padding: 1rem 1.5rem;
+      border-radius: 10px;
+      color: white;
+      font-weight: 600;
+      z-index: 10000;
+      animation: slideIn 0.3s ease-out;
+      background: ${type === 'error' ? '#ef4444' : type === 'info' ? '#3b82f6' : '#10b981'};
+    `;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+      notification.style.animation = 'slideOut 0.3s ease-in';
+      setTimeout(() => notification.remove(), 300);
+    }, 3000);
+  }
 
   // Live Stock Update
   let stock = 247;
@@ -302,5 +468,102 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       `;
     }
+  }
+
+  // ============================================
+  // DESPEGUE DIGITAL VIDEO - POSTER GENERATION
+  // Generates poster from second 25 of video
+  // ============================================
+  const despegueVideo = document.getElementById('despegue-digital-video');
+  const videoLoading = document.getElementById('video-loading');
+
+  if (despegueVideo) {
+    // Generate poster from second 25
+    const generatePoster = () => {
+      // Check if video has enough duration
+      if (despegueVideo.duration >= 25) {
+        // Create canvas to capture frame
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Set canvas dimensions to match video
+        canvas.width = despegueVideo.videoWidth || 1280;
+        canvas.height = despegueVideo.videoHeight || 720;
+        
+        // Seek to second 25
+        despegueVideo.currentTime = 25;
+        
+        // Wait for seek to complete
+        const seekHandler = () => {
+          // Draw current frame to canvas
+          ctx.drawImage(despegueVideo, 0, 0, canvas.width, canvas.height);
+          
+          // Convert to data URL and set as poster
+          try {
+            const posterDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+            despegueVideo.setAttribute('poster', posterDataUrl);
+            console.log('Video poster generated successfully from second 25');
+          } catch (e) {
+            console.warn('Could not generate poster:', e);
+          }
+          
+          // Reset video to beginning
+          despegueVideo.currentTime = 0;
+          
+          // Hide loading overlay
+          if (videoLoading) {
+            videoLoading.classList.add('hidden');
+          }
+          
+          // Remove event listeners
+          despegueVideo.removeEventListener('seeked', seekHandler);
+          despegueVideo.removeEventListener('loadedmetadata', generatePoster);
+        };
+        
+        despegueVideo.addEventListener('seeked', seekHandler);
+      } else {
+        // Video is shorter than 25 seconds, use first frame
+        console.warn('Video is shorter than 25 seconds, using first frame as poster');
+        if (videoLoading) {
+          videoLoading.classList.add('hidden');
+        }
+      }
+    };
+
+    // Wait for video metadata to load
+    if (despegueVideo.readyState >= 1) {
+      // Metadata already loaded
+      generatePoster();
+    } else {
+      despegueVideo.addEventListener('loadedmetadata', generatePoster);
+    }
+
+    // Handle video play/pause for analytics (optional)
+    despegueVideo.addEventListener('play', () => {
+      console.log('Despegue Digital video started playing');
+    });
+
+    despegueVideo.addEventListener('ended', () => {
+      console.log('Despegue Digital video ended');
+    });
+
+    // Error handling
+    despegueVideo.addEventListener('error', (e) => {
+      console.error('Video error:', e);
+      if (videoLoading) {
+        videoLoading.innerHTML = `
+          <span style="color: #ff6b6b;">Video could not be loaded</span>
+          <span style="font-size: 0.8rem; margin-top: 0.5rem;">Please check your connection and refresh</span>
+        `;
+      }
+    });
+
+    // Hide loading when video can play through
+    despegueVideo.addEventListener('canplaythrough', () => {
+      if (videoLoading && !videoLoading.classList.contains('hidden')) {
+        // Keep loading overlay until poster is generated
+        // It will be hidden by the poster generation function
+      }
+    });
   }
 });

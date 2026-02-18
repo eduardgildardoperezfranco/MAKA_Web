@@ -16,14 +16,14 @@
     <meta property="og:description" content="Discover exclusive fashion trends and the Despegue Digital e-book to boost your digital presence. Learn how to grow on social media, use WhatsApp and Instagram effectively, and more.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://maka.marketing">
-    <meta property="og:image" content="MAKA 3D.jpeg">
+    <meta property="og:image" content="MAKA%203D.jpeg">
     <meta property="og:site_name" content="MAKA">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="MAKA - Exclusive Fashion and Digital Growth">
     <meta name="twitter:description" content="Discover exclusive fashion trends and the Despegue Digital e-book to boost your digital presence. Learn how to grow on social media, use WhatsApp and Instagram effectively, and more.">
-    <meta name="twitter:image" content="MAKA 3D.jpeg">
+    <meta name="twitter:image" content="MAKA%203D.jpeg">
     <title>MAKA - Exclusive Fashion and Digital Growth</title>
-    <link rel="icon" href="MAKA 3D.jpeg" type="image/jpeg">
+    <link rel="icon" href="MAKA%203D.jpeg" type="image/jpeg">
     <link rel="stylesheet" href="Style.css?v=1">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -125,9 +125,9 @@
                 </li>
                 <li class="nav-item"><a href="https://wa.me/573142274000?text=Hola%20MAKA,%20me%20gustaría%20realizar%20una%20compra%20y%20necesito%20más%20información%20sobre%20los%20productos%20en%20mi%20carrito.%20¿Pueden%20ayudarme%20con%20el%20proceso%20de%20compra,%20disponibilidad%20y%20opciones%20de%20envío?" target="_blank" rel="noopener noreferrer" class="nav-link">Cart <span id="cart-total">$0</span><img
                         src="Paraiconos.jpg" alt="Cart Icon" class="nav-icon"></a></li>
-                <li class="nav-item"><a href="#ofertas" class="nav-link">Offers<img src="Paraiconos.jpg"
-                            alt="Offers Icon" class="nav-icon"></a></li>
-                <li class="nav-item"><a href="#galeria" class="nav-link">Gallery<img src="Paraiconos.jpg"
+                                <li class="nav-item"><a href="#ofertas" class="nav-link">Offers<img src="Paraiconos.jpg" alt="Offers Icon"
+                            class="nav-icon"></a></li>
+                <li class="nav-item"><a href="gallery.html" class="nav-link">Gallery<img src="Paraiconos.jpg"
                             alt="Gallery Icon" class="nav-icon"></a></li>
                 <li class="nav-item"><a href="https://wa.me/573142274000?text=Hola%20MAKA" target="_blank"
                         rel="noopener noreferrer" class="nav-link">Contact<img src="Paraiconos.jpg" alt="Contact Icon"
@@ -156,23 +156,92 @@
         <div class="circle-deco c1"></div>
         <div class="circle-deco c2"></div>
 
-        <!-- Hero Section -->
+        <!-- Hero Section with Grid Layout -->
         <header class="hero drop-hero">
-            <div class="hero-content text-center py-20">
-                <h1 class="hero-title text-5xl font-bold text-white mb-4">The Weekly Drop</h1>
-                <p class="hero-subtitle text-xl text-gray-300 mb-6">Curated Globally. Once it's gone, it's gone.</p>
-                <div class="live-stock mb-4">Live Stock: <span id="live-stock">247</span> items remaining</div>
-                <div class="countdown-timer mb-6">Next Drop in: <span id="countdown">02:15:30</span></div>
+            <div class="hero-content py-20">
+                <!-- Hero Grid: Timer (LEFT) + Video Logo (RIGHT) -->
+                <div class="hero-grid-container">
+                    <!-- Countdown Timer Section (LEFT) -->
+                    <div class="hero-timer-section">
+                        <div class="drop-countdown-container">
+                            <div class="countdown-header">
+                                <span class="countdown-label">🔥 EXCLUSIVE DROP INCOMING</span>
+                                <h2 class="countdown-title">Don't Miss Your Chance</h2>
+                                <p class="countdown-subtitle">Limited edition pieces dropping soon!</p>
+                            </div>
+                            
+                            <div class="countdown-display" id="countdown-display">
+                                <div class="countdown-unit">
+                                    <span class="countdown-value" id="countdown-days">15</span>
+                                    <span class="countdown-label-small">DAYS</span>
+                                </div>
+                                <div class="countdown-separator">:</div>
+                                <div class="countdown-unit">
+                                    <span class="countdown-value" id="countdown-hours">02</span>
+                                    <span class="countdown-label-small">HOURS</span>
+                                </div>
+                                <div class="countdown-separator">:</div>
+                                <div class="countdown-unit">
+                                    <span class="countdown-value" id="countdown-minutes">00</span>
+                                    <span class="countdown-label-small">MINS</span>
+                                </div>
+                                <div class="countdown-separator">:</div>
+                                <div class="countdown-unit">
+                                    <span class="countdown-value" id="countdown-seconds">00</span>
+                                    <span class="countdown-label-small">SECS</span>
+                                </div>
+                            </div>
+                            
+                            <div class="live-stock-badge">
+                                <span class="stock-icon">📦</span>
+                                <span class="stock-text">Live Stock: <strong id="live-stock">247</strong> items</span>
+                            </div>
+                            
+                            <div class="countdown-cta">
+                                <p class="cta-text">🚀 Be the first to access exclusive drops!</p>
+                                <form class="waitlist-form" id="waitlist-form">
+                                    <div class="form-row">
+                                        <input type="email" id="waitlist-email" placeholder="Enter your email" required>
+                                        <input type="tel" id="waitlist-phone" placeholder="WhatsApp (e.g., +57 314 227 4000)" required>
+                                    </div>
+                                    <button type="submit" class="waitlist-btn">
+                                        <span class="btn-icon">📱</span>
+                                        <span class="btn-text">Join Waitlist via WhatsApp</span>
+                                    </button>
+                                </form>
+                                <p class="waitlist-count">👥 <span id="waitlist-count">1,247</span> already on the list</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- MAKA Video Logo Section (RIGHT) -->
+                    <div class="hero-video-section">
+                        <div class="maka-video-wrapper">
+                            <video 
+                                class="maka-hero-video" 
+                                src="Maka_Animated.mp4" 
+                                autoplay 
+                                muted 
+                                loop 
+                                playsinline 
+                                preload="metadata"
+                                poster="MAKA 3D.jpeg"
+                                aria-label="MAKA Brand Animation">
+                            </video>
+                            <div class="video-glow-effect"></div>
+                        </div>
+                        <div class="hero-brand-text">
+                            <h1 class="hero-title text-5xl font-bold text-white mb-2">The Weekly Drop</h1>
+                            <p class="hero-subtitle text-xl text-gray-300">Curated Globally. Once it's gone, it's gone.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </header>
 
-        <!-- 3D Visualization Container -->
+        <!-- Welcome Message Container -->
         <div id="brain-container">
-            <video id="brain-video" autoplay muted loop playsinline preload="metadata" poster="MAKA 3D.jpeg">
-                <source src="Maka_Animated.mp4" type="video/mp4">
-            </video>
             <!-- Welcome Message -->
-
             <div class="welcome-message" id="welcome-message">
                 The Acquisition Protocol is Closing: Identity Architecture: Our current collection—the core components of this season's identity—is reaching the end of its cycle. This is the final notice to acquire these essential garments before they are decommissioned. Build your wardrobe's architecture while you still can.
         </div>
@@ -294,11 +363,31 @@
                 <div class="section-content">
                     <h2 class="section-title">Visual Archive</h2>
                     <p class="section-text">
-                        Discover the hottest trends that are taking over the streets! Our exclusive collection features the most sought-after styles that everyone is talking about. Limited quantities available - once they're gone, they're gone! Get yours now before the next fashion wave hits. Your perfect look is just one click away!
+                        Discover our exclusive collection! All products available for immediate consultation via WhatsApp.
                     </p>
 
-                    <!-- Enhanced Gallery System -->
-                    <div class="maka-gallery-container" id="maka-gallery"></div>
+                    <!-- Gallery Preview Card with CTA -->
+                    <div class="gallery-preview-card">
+                        <div class="gallery-preview-header">
+                            <h3 class="gallery-preview-title">🎨 Colección Exclusiva</h3>
+                            <p class="gallery-preview-subtitle">Descubre nuestra selección de moda premium</p>
+                        </div>
+                        
+                        <div class="gallery-preview-images" id="gallery-preview-grid">
+                            <!-- Preview images loaded dynamically -->
+                        </div>
+                        
+                        <div class="gallery-preview-cta">
+                            <a href="gallery.html" class="gallery-cta-button">
+                                <span class="cta-icon">👁️</span>
+                                <span class="cta-text">Ver Catálogo Completo</span>
+                                <span class="cta-arrow">→</span>
+                            </a>
+                            <p class="gallery-preview-count">
+                                <span id="product-count-preview">60+</span> productos exclusivos te esperan
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -309,6 +398,24 @@
                     <p class="section-text">
                         Discover the power of social media and take your digital presence to the next level! With our e-book "Digital Takeoff", you will learn to create attractive content, use WhatsApp and Instagram effectively, and grow on social media. This product includes two exclusive bonuses and five chapters full of practical strategies and useful tips. Available on <a href="https://hotmart.com/es-co?utm_source=google&utm_medium=paid&utm_campaign=col_co_awar_cad_institucional_search_alwayson&utm_content=col_co_awar_cad_institucional_search_alwayson_all_kw_hotmart-exata&gad_source=1&gad_campaignid=12059973293&gbraid=0AAAAADAl77vHrEjXDOWG0RGkccuVZdLQV&gclid=CjwKCAiAjc7KBhBvEiwAE2BDOZyXz1N4X4-3Mr62LemvM9QGKcJ2By1btSP_LNp6Np_4hhJKQL4i_BoCNNwQAvD_BwE" target="_blank" rel="noopener noreferrer" class="hotmart-link">HOTMART</a>.
                     </p>
+                    
+                    <!-- Despegue Digital Video -->
+                    <div class="video-showcase-container">
+                        <video 
+                            id="despegue-digital-video" 
+                            class="responsive-video"
+                            src="src/Assets/Gallery%20Videos/Despegue_Digital_%20Oportunidad_Global.mp4" 
+                            controls 
+                            preload="metadata"
+                            playsinline
+                            aria-label="Despegue Digital - Oportunidad Global promotional video">
+                            Your browser does not support the video tag. Please update your browser to view this content.
+                        </video>
+                        <div class="video-loading-overlay" id="video-loading">
+                            <div class="video-spinner"></div>
+                            <span>Loading video...</span>
+                        </div>
+                    </div>
                     <div class="features-grid">
                         <div class="feature-item">
                             <i class="fas fa-book feature-icon"></i>
@@ -395,7 +502,7 @@
             </div>
             <p class="footer-copyright" data-i18n="footer.copyright">© 2025 MAKA. Operating under Andean Decision 486.
                 <a href="terms.html" class="footer-link">Legal & Terms</a>. By Carolina Perez Franco</p>
-            <p class="footer-version">Version 0.1.0</p>
+            <p class="footer-version">Version 0.2.0</p>
             <a href="https://wa.me/573142274000" class="whatsapp-help" target="_blank" rel="noopener noreferrer">
                 <i class="fab fa-whatsapp"></i>
                 <span class="tooltip">I can help you, just ask me</span>
@@ -406,7 +513,7 @@
     <!-- Three.js library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script type="module" src="translations.js"></script>
-    <script type="module" src="galleryManager.js"></script>
+    <script type="module" src="galleryPreview.js"></script>
     <script type="module" src="Script.js"></script>
 </body>
 
