@@ -1,0 +1,23 @@
+# MAKA Web - Robots.txt
+# https://maka.marketing
+
+User-agent: *
+Allow: /
+
+# Disallow admin and test pages
+Disallow: /adminDashboard.html
+Disallow: /test_*.html
+Disallow: /testImagePaths.html
+
+# Allow all assets
+Allow: /src/Assets/
+Allow: /Style.css
+Allow: /script.js
+Allow: /translations.js
+Allow: /galleryManager.js
+
+# Sitemap location
+Sitemap: https://maka.marketing/sitemap.xml
+
+# Crawl delay (optional, be nice to shared hosting)
+Crawl-delay: 1

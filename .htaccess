@@ -1,18 +1,34 @@
 # MAKA Web - Hostinger Production Configuration
-# Optimized for shared hosting with security best practices
+# Simplified for maximum compatibility
 
-# Enable rewrite engine
+# ============================================
+# CRITICAL: Directory Index Configuration
+# ============================================
+# This tells the server which file to load by default
+DirectoryIndex index.html index.htm Index.html
+
+# ============================================
+# Enable Rewrite Engine
+# ============================================
 RewriteEngine On
 
-# Force HTTPS (ENABLE FOR PRODUCTION)
-RewriteCond %{HTTPS} off
-RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+# ============================================
+# HTTPS Redirect (DISABLE INITIALLY - Enable after SSL is confirmed)
+# ============================================
+# Uncomment these lines AFTER SSL certificate is active in Hostinger panel
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-# Force www to non-www (or vice versa - choose one)
-RewriteCond %{HTTP_HOST} ^www\.maka\.marketing [NC]
-RewriteRule ^(.*)$ https://maka.marketing/$1 [L,R=301]
+# ============================================
+# WWW to Non-WWW Redirect (Enable after domain is configured)
+# ============================================
+# Uncomment and customize after domain is properly set up
+# RewriteCond %{HTTP_HOST} ^www\.maka\.marketing [NC]
+# RewriteRule ^(.*)$ https://maka.marketing/$1 [L,R=301]
 
-# Set proper MIME types for all assets
+# ============================================
+# MIME Types Configuration
+# ============================================
 <IfModule mod_mime.c>
     # Images
     AddType image/jpeg .jpg .jpeg .jpe
@@ -22,6 +38,7 @@ RewriteRule ^(.*)$ https://maka.marketing/$1 [L,R=301]
     AddType image/svg+xml .svg .svgz
     AddType image/bmp .bmp
     AddType image/tiff .tif .tiff
+    AddType image/ico .ico
     
     # Video
     AddType video/mp4 .mp4 .m4v
@@ -36,7 +53,7 @@ RewriteRule ^(.*)$ https://maka.marketing/$1 [L,R=301]
     AddType font/woff2 .woff2
     AddType application/vnd.ms-fontobject .eot
     
-    # Data
+    # Data and Scripts
     AddType application/json .json
     AddType application/javascript .js
     AddType text/javascript .js
@@ -45,49 +62,29 @@ RewriteRule ^(.*)$ https://maka.marketing/$1 [L,R=301]
     # Documents
     AddType application/pdf .pdf
     AddType application/xml .xml
+    AddType text/html .html .htm
 </IfModule>
 
-# Enable CORS for all assets (important for fonts, images, JSON)
+# ============================================
+# CORS Headers (Important for fonts, images, JSON)
+# ============================================
 <IfModule mod_headers.c>
-    # Allow all origins for assets
+    # Allow CORS for static assets
     <FilesMatch "\.(jpg|jpeg|png|gif|webp|svg|ico|mp4|webm|ogg|mp3|wav|json|js|css|woff|woff2|ttf|otf|eot)$">
         Header set Access-Control-Allow-Origin "*"
-        Header set Access-Control-Allow-Methods "GET, OPTIONS"
-        Header set Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept"
     </FilesMatch>
     
-    # Cache control for static assets
-    <FilesMatch "\.(jpg|jpeg|png|gif|webp|svg|ico|mp4|webm|woff|woff2|ttf|otf|eot)$">
-        Header set Cache-Control "public, max-age=31536000, immutable"
-    </FilesMatch>
-    
-    <FilesMatch "\.(css|js)$">
-        Header set Cache-Control "public, max-age=86400"
-    </FilesMatch>
-    
-    <FilesMatch "\.(json)$">
-        Header set Cache-Control "public, max-age=3600"
-    </FilesMatch>
+    # Security Headers
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
 </IfModule>
 
-# Hotlink protection - Allow from own domain and common services
-<IfModule mod_rewrite.c>
-    RewriteCond %{HTTP_REFERER} !^$
-    RewriteCond %{HTTP_REFERER} !^https?://(www\.)?maka\.marketing [NC]
-    RewriteCond %{HTTP_REFERER} !^https?://(www\.)?makahoodies\.com [NC]
-    RewriteCond %{HTTP_REFERER} !^https?://(www\.)?localhost [NC]
-    RewriteCond %{HTTP_REFERER} !^https?://127\.0\.0\.1 [NC]
-    RewriteCond %{HTTP_REFERER} !^https?://.*\.google\. [NC]
-    RewriteCond %{HTTP_REFERER} !^https?://.*\.facebook\.com [NC]
-    RewriteCond %{HTTP_REFERER} !^https?://.*\.instagram\.com [NC]
-    RewriteCond %{HTTP_REFERER} !^https?://.*\.whatsapp\.com [NC]
-    # Allow empty referrer for direct access
-    RewriteRule \.(jpg|jpeg|png|gif|webp|svg|mp4|webm)$ - [NC,L]
-</IfModule>
-
-# Enable compression for faster loading
+# ============================================
+# Compression (GZIP)
+# ============================================
 <IfModule mod_deflate.c>
-    # Compress text, html, javascript, css, xml
     AddOutputFilterByType DEFLATE text/plain
     AddOutputFilterByType DEFLATE text/html
     AddOutputFilterByType DEFLATE text/xml
@@ -100,66 +97,13 @@ RewriteRule ^(.*)$ https://maka.marketing/$1 [L,R=301]
     AddOutputFilterByType DEFLATE application/x-javascript
     AddOutputFilterByType DEFLATE application/json
     
-    # Don't compress images and other binary files
+    # Don't compress binary files
     SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png|webp|svg|mp4|webm|ogg|mp3|wav|woff|woff2|ttf|otf|eot)$ no-gzip dont-vary
 </IfModule>
 
-# Protect sensitive files
-<FilesMatch "^\.">
-    Order allow,deny
-    Deny from all
-</FilesMatch>
-
-<FilesMatch "\.(git|env|htpasswd|ini|log|sh|sql)$">
-    Order allow,deny
-    Deny from all
-</FilesMatch>
-
-# Custom error pages (optional)
-ErrorDocument 404 /Index.html
-ErrorDocument 500 /Index.html
-
-# Enable directory indexing for assets folder (optional, for debugging)
-# Options +Indexes
-# <Directory "src/Assets">
-#     Options +Indexes
-# </Directory>
-
-# Increase upload limits (if allowed by host)
-<IfModule mod_php.c>
-    php_value upload_max_filesize 50M
-    php_value post_max_size 50M
-    php_value max_execution_time 300
-    php_value max_input_time 300
-</IfModule>
-
-# Security headers
-<IfModule mod_headers.c>
-    Header set X-Content-Type-Options "nosniff"
-    Header set X-Frame-Options "SAMEORIGIN"
-    Header set X-XSS-Protection "1; mode=block"
-    Header set Referrer-Policy "strict-origin-when-cross-origin"
-    Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
-    # Remove X-Powered-By header for security
-    Header unset X-Powered-By
-</IfModule>
-
-# Block access to sensitive files and directories
-<IfModule mod_rewrite.c>
-    # Block access to backup files
-    RewriteRule ^.*\.(bak|backup|old|orig|original|save|swp|tmp)$ - [F,L]
-    
-    # Block access to common sensitive paths
-    RewriteRule ^(\.git|\.env|\.svn|\.htaccess|\.htpasswd|wp-admin|wp-login|phpMyAdmin|pma|admin) - [F,L]
-</IfModule>
-
-# Prevent directory browsing
-Options -Indexes
-
-# Set default character encoding
-AddDefaultCharset UTF-8
-
-# Optimize for Hostinger shared hosting
+# ============================================
+# Browser Caching
+# ============================================
 <IfModule mod_expires.c>
     ExpiresActive On
     ExpiresDefault "access plus 1 month"
@@ -168,10 +112,52 @@ AddDefaultCharset UTF-8
     ExpiresByType image/gif "access plus 1 year"
     ExpiresByType image/webp "access plus 1 year"
     ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType image/ico "access plus 1 year"
     ExpiresByType video/mp4 "access plus 1 year"
     ExpiresByType video/webm "access plus 1 year"
     ExpiresByType text/css "access plus 1 week"
     ExpiresByType application/javascript "access plus 1 week"
     ExpiresByType text/javascript "access plus 1 week"
     ExpiresByType application/json "access plus 1 hour"
+</IfModule>
+
+# ============================================
+# Security: Block Sensitive Files
+# ============================================
+# Block access to hidden files (starting with .)
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Block access to sensitive file extensions
+<FilesMatch "\.(git|env|htpasswd|ini|log|sh|sql|bak|backup|old|orig|save|swp|tmp)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# ============================================
+# Prevent Directory Browsing
+# ============================================
+Options -Indexes
+
+# ============================================
+# Default Character Encoding
+# ============================================
+AddDefaultCharset UTF-8
+
+# ============================================
+# Custom Error Pages
+# ============================================
+ErrorDocument 404 /index.html
+ErrorDocument 500 /index.html
+
+# ============================================
+# PHP Settings (if applicable)
+# ============================================
+<IfModule mod_php.c>
+    php_value upload_max_filesize 50M
+    php_value post_max_size 50M
+    php_value max_execution_time 300
+    php_value max_input_time 300
 </IfModule>

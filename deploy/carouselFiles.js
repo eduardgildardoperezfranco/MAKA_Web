@@ -1,0 +1,23 @@
+export const carouselFiles = [
+    'promotions/Presentation.png',
+    'promotions/Presentation2.jpeg',
+    'promotions/Presentation3.jpeg',
+    'promotions/Presentation4.jpeg',
+    'promotions/Presentation5.jpeg',
+    'promotions/Presentation6.jpeg',
+    'promotions/Presentation7.jpeg',
+    'promotions/Presentation8.png',
+    'promotions/Presentation9.jpeg',
+    'promotions/Presentation10.jpeg',
+    'promotions/Presentation11.jpeg',
+    'promotions/Presentation12.jpeg',
+    'promotions/Presentation13.jpeg',
+    'promotions/Presentation14.jpeg',
+    'promotions/Presentation15.jpeg',
+    'promotions/Presentation16.jpeg',
+    'promotions/Presentation17.jpeg',
+    'promotions/Promotion4.png',
+    'promotions/Promotion6.png',
+    'promotions/Promotion8.png',
+    'promotions/promotions2.jpg'
+];
